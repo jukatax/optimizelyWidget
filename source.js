@@ -19,6 +19,7 @@ window['optimizely'].push({
  all : all messages, including detailed debugging information (intended for developers)
  */
 var start = 0;
+var domain = document.domain.split('.').length>2?document.domain.split('.')[document.domain.split('.').length-2]+"."+document.domain.split('.')[document.domain.split('.').length-1] : document.domain;
 function poll4elems(frame){
         if(!(window.optimizely && (typeof optimizely.get==="function")) && (optimizely.activeExperiments||window.optimizely.get('state').getVariationMap()) ){
                 if(!start){start=frame;}
@@ -51,14 +52,14 @@ function addBookmarklet() {
                 if (cname && cname.value) {
                         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
                         var expires = "expires=" + d.toUTCString();
-                        document.cookie = cname.value + "=1;path=/;" + expires;
+                        document.cookie = cname.value + "=1;path=/;domain="+domain+";" + expires;
                         cerror.innerHTML = "Cookie has been Set!";
                         if (exdays == "-1") {
-                                document.cookie = "optimizelySegments=0;path=/;expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyBuckets=0;path=/;expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyEndUserId=0;path=/;expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelySegments=0;path=/;expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyPendingLogEvents=0;path=/;expires=Thu, 18 Dec 2013 12:00:00 UTC;";
+                                document.cookie = "optimizelySegments=0;path=/;domain="+domain+";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
+                                document.cookie = "optimizelyBuckets=0;path=/;domain="+domain+";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
+                                document.cookie = "optimizelyEndUserId=0;path=/;domain="+domain+";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
+                                document.cookie = "optimizelySegments=0;path=/;domain="+domain+";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
+                                document.cookie = "optimizelyPendingLogEvents=0;path=/;domain="+domain+";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
                                 window.localStorage.clear();
                                 window.sessionStorage.clear();
                         }
