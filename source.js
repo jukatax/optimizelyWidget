@@ -5,6 +5,9 @@
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
  ?optimizely_force_tracking=true
  */
+/*
+In order for thr log to work this script has to be injected before the call to Optimizely, in Tampermonkey set the script to be injected at "document start"
+ */
 window['optimizely'] = window['optimizely'] || [];
 window['optimizely'].push({
         type: 'log',
@@ -21,21 +24,21 @@ window['optimizely'].push({
 var start = 0;
 var domain = document.domain.split('.').length>2?document.domain.split('.')[document.domain.split('.').length-2]+"."+document.domain.split('.')[document.domain.split('.').length-1] : document.domain;
 function poll4elems(frame){
-        if(!(window.optimizely && (typeof optimizely.get==="function")) && (optimizely.activeExperiments||window.optimizely.get('state').getVariationMap()) ){
+        if(!((window.optimizely && typeof window.optimizely.get === "function") && (typeof window.optimizely.activeExperiments==="object" || window.optimizely.get('state').getVariationMap()))){
                 if(!start){start=frame;}
                 if(frame-start<4000){
                         requestAnimationFrame(poll4elems);
                 }else{
-                        console.log("aborting widget poll... ");
+                        console.log("Optimizely NOT running on this page - aborting widget ... ");
                         return;
                 }
         }
         else{
-                addBookmarklet();
+                optimizelyWidget();
         }
 }
 requestAnimationFrame(poll4elems);
-function addBookmarklet() {
+function optimizelyWidget(){
         var content = '<div><input type="text" style="margin:0;padding:2px 0;width: auto;" placeholder="cookie name" id="cname_yuli" value="xx_qa" />' +
                 '<button onclick="setCookie(0.5)" style="color : #888;margin : 0; border : 1px solid #555;background : #0f0;">Set</button><button onclick="setCookie(-1)" style="color : #fff; border : 1px solid #555;background : #f00;">Remove</button></div>' +
                 '<div id="cerror" style="color : #fff; background : #f00;"></div>' +
