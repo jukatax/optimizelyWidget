@@ -71,7 +71,7 @@ function optimizelyWidget(){
                 }
                 setTimeout(function () {
                         cerror.innerHTML = "";
-                }, 3000);
+                }, 1000);
         };
         window.removeThis = function () {
                 bdy.removeChild(document.getElementById("ccontainer_yuli"));
@@ -87,14 +87,17 @@ function optimizelyWidget(){
         bdy.appendChild(div);
         document.querySelector("#ccontainer_yuli").setAttribute("style", container_styles);
         var variations = {};
+        var activeExp = [];
         if (window.optimizely && window.optimizely.variationNamesMap && optimizely.activeExperiments.length) {
                 Object.assign(variations,optimizely.variationNamesMap);
+                activeExp = activeExp.concat(optimizely.activeExperiments);
         }
         if (window.optimizely && window.optimizely.get('state').getVariationMap() && Object.getOwnPropertyNames(window.optimizely.get('state').getVariationMap()).length) {
                 Object.assign(variations,window.optimizely.get('state').getVariationMap());
+                activeExp = activeExp.concat(optimizely.get('state').getActiveExperimentIds());
         }
-        if(Object.getOwnPropertyNames(variations).length){
-                Object.getOwnPropertyNames(variations).forEach(function (val, ind) {
+        if(activeExp.length){
+                activeExp.forEach(function (val, ind) {
                         var div = document.createElement("div");
                         var varName = variations[val].name?variations[val].name:variations[val];
                         div.style = "margin : 0;padding : 5px 0;";

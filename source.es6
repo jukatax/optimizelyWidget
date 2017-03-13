@@ -27,7 +27,7 @@ class optimizelyWidget {
                 }
                 setTimeout(function () {
                         cerror.innerHTML = "";
-                }, 3000);
+                }, 1000);
         }
 
         removeThis() {
@@ -40,14 +40,17 @@ class optimizelyWidget {
 
         getVariations() {
                 let variations = {};
+                let activeExp = [];
                 if (window.optimizely && window.optimizely.variationNamesMap && optimizely.activeExperiments.length) {
                         Object.assign(variations, optimizely.variationNamesMap);
+                        activeExp = activeExp.concat(optimizely.activeExperiments);
                 }
                 if (window.optimizely && window.optimizely.get('state').getVariationMap() && Object.getOwnPropertyNames(window.optimizely.get('state').getVariationMap()).length) {
                         Object.assign(variations, window.optimizely.get('state').getVariationMap());
+                        activeExp = activeExp.concat(optimizely.get('state').getActiveExperimentIds());
                 }
-                if (Object.getOwnPropertyNames(variations).length) {
-                        Object.getOwnPropertyNames(variations).map(function (val, ind) {
+                if (activeExp.length) {
+                        activeExp.map(function (val, ind) {
                                 let div = document.createElement("div");
                                 let varName = variations[val].name ? variations[val].name : variations[val];
                                 div.style = "margin : 0;padding : 5px 0;";
