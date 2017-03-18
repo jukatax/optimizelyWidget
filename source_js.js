@@ -8,8 +8,8 @@
 /*
 In order for thr log to work this script has to be injected before the call to Optimizely, in Tampermonkey set the script to be injected at "document start"
  */
-window['optimizely'] = window['optimizely'] || [];
-window['optimizely'].push({
+window.optimizely = window.optimizely || [];
+window.optimizely.push({
         type: 'log',
         level: 'error'
 });
