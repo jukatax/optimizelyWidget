@@ -25,7 +25,7 @@ window.optimizely.push({
 var start = 0;
 var domain = document.domain.split('.').length>2?document.domain.split('.')[document.domain.split('.').length-2]+"."+document.domain.split('.')[document.domain.split('.').length-1] : document.domain;
 function poll4elems(frame){
-        if(!((window.optimizely && typeof window.optimizely.get === "function") && (typeof window.optimizely.activeExperiments==="object" || window.optimizely.get('state').getVariationMap()))){
+        if(!((document.body && window.optimizely && typeof window.optimizely.get === "function") && (typeof window.optimizely.activeExperiments==="object" || window.optimizely.get('state').getVariationMap()))){
                 if(!start){start=frame;}
                 if(frame-start<4000){
                         requestAnimationFrame(poll4elems);
@@ -80,7 +80,7 @@ function optimizelyWidget(){
         window.setExperiment = function(variationId){
                 window.location.search = "optimizely_x="+variationId+"&optimizely_token=PUBLIC";
         };
-        var container_styles = "position : fixed; z-index : 999; top : 10px; left : 10px; padding : 25px; background : rgb(238, 241, 255); border : 1px solid #aaa; border-radius : 3px; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;";
+        var container_styles = "position : fixed; z-index : 999999999; top : 10px; left : 10px; padding : 25px; background : rgb(238, 241, 255); border : 1px solid #aaa; border-radius : 3px; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;";
         var div = document.createElement("div");
         div.id = "ccontainer_yuli";
         div.style = container_styles;

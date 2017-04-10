@@ -81,7 +81,7 @@ class optimizelyWidget {
                                 '<span id="removeWidget" style="padding : 5px 8px; position : absolute; top : 0; right : 0; color : #f00; background : rgba(235,28,36,0.4);cursor : pointer;"> X </span>' +
                                 '<div id="optimizely_info_data" style="margin: 2px 0 0;padding : 5px;border : 1px solid #555;border-radius : 3px;">' +
                                 '</div>',
-                        container_styles = "position : fixed; z-index : 999; top : 10px; left : 10px; padding : 25px; background : rgb(238, 241, 255); border : 1px solid #aaa; border-radius : 3px; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;";
+                        container_styles = "position : fixed; z-index : 999999999; top : 10px; left : 10px; padding : 25px; background : rgb(238, 241, 255); border : 1px solid #aaa; border-radius : 3px; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;";
                 let div = document.createElement("div");
                 div.id = "ccontainer_yuli";
                 div.style = container_styles;
@@ -96,7 +96,7 @@ let newWidget = new optimizelyWidget();
 let start = 0;
 
 let poll4elems = (frame)=> {
-        if (!((window.optimizely && typeof window.optimizely.get === "function") && (typeof window.optimizely.activeExperiments==="object" || window.optimizely.get('state').getVariationMap()))) {
+        if (!((document.body && window.optimizely && typeof window.optimizely.get === "function") && (typeof window.optimizely.activeExperiments==="object" || window.optimizely.get('state').getVariationMap()))) {
                 if (!start) {
                         start = frame;
                 }
