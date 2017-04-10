@@ -1,6 +1,6 @@
 /**
  * Created by YYordanov on 11/03/17.
- * v3.0
+ * v3.1
  */
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
