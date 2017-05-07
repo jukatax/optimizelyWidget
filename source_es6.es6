@@ -35,7 +35,12 @@ class optimizelyWidget {
         }
 
         setExperiment(variationId) {
-                window.location.search = "optimizely_x=" + variationId + "&optimizely_token=PUBLIC";
+                var wls = window.location.search;
+                if(/optimizely_x/.test(wls)){
+                        window.location.search = wls.replace(/optimizely_x=\d+/ , "optimizely_x="+variationId);
+                }else{
+                        window.location.search = wls+"&optimizely_x="+variationId;
+                }
         }
 
         getVariations() {

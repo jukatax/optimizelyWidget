@@ -1,6 +1,7 @@
 /**
+ * Optimizely X widget
  * Created by YYordanov on 11/03/17.
- * v3.1
+ * v3.2
  */
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
@@ -78,7 +79,12 @@ function optimizelyWidget(){
                 bdy.removeChild(document.getElementById("ccontainer_yuli"));
         };
         window.setExperiment = function(variationId){
-                window.location.search = "optimizely_x="+variationId+"&optimizely_token=PUBLIC";
+                var wls = window.location.search;
+                if(/optimizely_x/.test(wls)){
+                        window.location.search = wls.replace(/optimizely_x=\d+/ , "optimizely_x="+variationId);
+                }else{
+                        window.location.search = wls+"&optimizely_x="+variationId;
+                }
         };
         var container_styles = "position : fixed; z-index : 999999999; top : 10px; left : 10px; padding : 25px; background : rgb(238, 241, 255); border : 1px solid #aaa; border-radius : 3px; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;";
         var div = document.createElement("div");
