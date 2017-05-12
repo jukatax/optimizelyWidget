@@ -41,8 +41,8 @@ function poll4elems(frame){
 }
 requestAnimationFrame(poll4elems);
 function optimizelyWidget(){
-        var content = '<div><input type="text" style="margin:0;padding:2px 0;width: auto;" placeholder="cookie name" id="cname_yuli" value="yy_qa" />' +
-            '<button onclick="setCookie(0.5)" style="color : #888;margin : 0;font-size: 12px;padding: 2px 10px; border : 1px solid #555;background : #0f0;">Set</button><button onclick="setCookie(-1)" style="color : #fff;font-size: 12px;padding: 2px 10px; border : 1px solid #555;background : #f00;">Remove</button></div>' +
+        var content = '<div><input type="text" style="margin:0;padding:2px 0;width: auto;font-size: 12px;height : 25px;line-height : 14px;" placeholder="cookie name" id="cname_yuli" value="yy_qa" />' +
+            '<button onclick="setCookie(0.5)" style="color : #888;margin : 0;font-size: 12px;padding: 3px 10px; border : 1px solid #555;background : #0f0;">Set</button><button onclick="setCookie(-1)" style="color : #fff;font-size: 12px;padding: 3px 10px; border : 1px solid #555;background : #f00;">Remove</button></div>' +
             '<div id="cerror" style="color : #fff; background : #f00;"></div>' +
             '<span style="padding : 5px 8px; position : absolute; top : 0; right : 0; color : #f00; background : rgba(235,28,36,0.4);cursor : pointer;" onclick="removeThis()"> X </span>' +
             '<div id="optimizely_info_data" style="margin: 2px 0 0;">' +
