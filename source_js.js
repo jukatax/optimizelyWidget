@@ -118,7 +118,7 @@ function optimizelyWidget(){
                                 div.style = "margin : 0;padding : 0 0 0 10px;";
                                 var isActive = varName==val.name?true:false;
                                 var styles = 'color:#a210e7;';
-                                div.innerHTML = isActive?"<div style="+styles+"><span id=\"test_name\">" + val.name + "<span style='font-style:italic;font-size:11px;'>(active)</span></div>":"<div><span id=\"test_name\">" + val.name + "</span> - <a href='#' style="+styles+" onclick=\"setExperiment("+val.id+")\">activate</a></div>";
+                                div.innerHTML = isActive?"<div style="+styles+"><span id=\"test_name\">" + val.name + " - " + val.id +  "<span style='font-style:italic;font-size:11px;'>(active)</span></div>":"<div><span id=\"test_name\">" + val.name + " - " + val.id +  "</span> - <a href='#' style="+styles+" onclick=\"setExperiment("+val.id+")\">activate</a></div>";
                                 document.querySelector("#test_id_"+ind).appendChild(div);
                         });
                 });
