@@ -1,7 +1,7 @@
 /**
  * Optimizely X widget
  * Created by YYordanov on 11/03/17.
- * v3.4
+ * v3.5
  */
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
@@ -110,16 +110,16 @@ function optimizelyWidget(){
                         var experiment = data.experiments[val];
                         var varName = variations[val].name?variations[val].name:variations[val];
                         var divWrap = document.createElement("div");
-                        divWrap.innerHTML = "<div id=\"test_id\" style='font-size : 12px;border : 1px solid #a210e7;border-radius : 3px;margin : 0 0 5px;padding : 5px;'>ID: " + val + ",rv:<span id=\"test_version\">" + (optimizely.get('data').revision||optimizely.revision)  + "</span><br />"+experiment.name+" </div>";
+                        divWrap.innerHTML = "<div id=\"test_id_"+ind+"\" style='font-size : 12px;border : 1px solid #a210e7;border-radius : 3px;margin : 0 0 5px;padding : 5px;'>ID: " + val + ",rv:<span id=\"test_version\">" + (optimizely.get('data').revision||optimizely.revision)  + "</span><br />"+experiment.name+" </div>";
                         if(typeof varName==="string"){document.querySelector("#optimizely_info_data").appendChild(divWrap);}
 
-                        experiment.variations.forEach(function(val,ind){
+                        experiment.variations.forEach(function(val,indx){
                                 var div = document.createElement("div");
                                 div.style = "margin : 0;padding : 0 0 0 10px;";
                                 var isActive = varName==val.name?true:false;
                                 var styles = 'color:#a210e7;';
                                 div.innerHTML = isActive?"<div style="+styles+"><span id=\"test_name\">" + val.name + "<span style='font-style:italic;font-size:11px;'>(active)</span></div>":"<div><span id=\"test_name\">" + val.name + "</span> - <a href='#' style="+styles+" onclick=\"setExperiment("+val.id+")\">activate</a></div>";
-                                document.querySelector("#test_id").appendChild(div);
+                                document.querySelector("#test_id_"+ind).appendChild(div);
                         });
                 });
         }
