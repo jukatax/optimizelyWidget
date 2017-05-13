@@ -2,6 +2,10 @@ class optimizelyWidget {
         constructor() {
                 this.domain = document.domain.split('.').length > 2 ? document.domain.split('.')[document.domain.split('.').length - 2] + "." + document.domain.split('.')[document.domain.split('.').length - 1] : document.domain;
                 this.bdy = document.body;
+                this.bckgrnd_clr = '#f4f7f1';
+                this.main_clr = '#19405b';
+                this.active_clr = '#3778ad';
+                this.font_size = '12px';
         }
 
         setCookie(exdays) {
@@ -57,19 +61,20 @@ class optimizelyWidget {
                 var data = optimizely.get('data');
                 console.log("Optimizely Experiments: ",data);
                 if (activeExp.length) {
+                        let vm = this;
                         activeExp.map(function (val, ind) {
                                 var experiment = data.experiments[val];
                                 var varName = variations[val].name?variations[val].name:variations[val];
                                 var divWrap = document.createElement("div");
-                                divWrap.innerHTML = "<div id=\"test_id_"+ind+"\" style='font-size : 12px;border : 1px solid #a210e7;border-radius : 3px;margin : 0 0 5px;padding : 5px;'>ID: " + val + ",rv:<span id=\"test_version\">" + (optimizely.get('data').revision||optimizely.revision)  + "</span><br />"+experiment.name+" </div>";
+                                divWrap.innerHTML = "<div id=\"test_id_"+ind+"\" style='font-size : "+vm.font_size+";border : 1px solid "+vm.main_clr+";border-radius : 3px;margin : 0 0 5px;padding : 5px;'>ID: " + val + ",rv:<span id=\"test_version\">" + (optimizely.get('data').revision||optimizely.revision)  + "</span><br />"+experiment.name+" </div>";
                                 if(typeof varName==="string"){document.querySelector("#optimizely_info_data").appendChild(divWrap);}
 
                                 experiment.variations.forEach(function(val,indx){
                                         var div = document.createElement("div");
                                         div.style = "margin : 0;padding : 0 0 0 10px;";
                                         var isActive = varName==val.name?true:false;
-                                        var styles = 'color:#a210e7;';
-                                        div.innerHTML = isActive?"<div style="+styles+"><span id=\"test_name\">" + val.name + " - " + val.id +  "<span style='font-style:italic;font-size:11px;'>(active)</span></div>":"<div><span id=\"test_name\">" + val.name + " - " + val.id +  "</span> - <a href='#' style="+styles+" onclick=\"setExperiment("+val.id+")\">activate</a></div>";
+                                        var styles = 'color:'+vm.active_clr+';';
+                                        div.innerHTML = isActive?"<div style="+styles+"><span id=\"test_name\">" + val.name + " - " + val.id +  "<span style='font-style:italic;font-size:'+vm.font_size+';'>(active)</span></div>":"<div><span id=\"test_name\">" + val.name + " - " + val.id +  "</span> - <a href='#' style="+styles+" onclick=\"setExperiment("+val.id+")\">activate</a></div>";
                                         document.querySelector("#test_id_"+ind).appendChild(div);
                                 });
                         });
@@ -82,18 +87,17 @@ class optimizelyWidget {
         setEvents(){
                 document.querySelector("#setCookie").addEventListener('click', this.setCookie.bind(this,0.5));
                 document.querySelector("#removeCookie").addEventListener('click', this.setCookie.bind(this,-1));
-                //document.querySelector("#setExperiment").addEventListener('click', this.setExperiment.bind(this,document.getElementById('variationId_yuli').value));
                 document.querySelector("#removeWidget").addEventListener('click', this.removeThis.bind(this));
         }
 
         init() {
-                let content = '<div><input type="text" style="margin:0;padding:2px 0;width: auto;font-size: 12px;height : 25px;line-height : 14px;" placeholder="cookie name" id="cname_yuli" value="yy_qa" />' +
-                    '<button id="setCookie" style="color : #888;margin : 0;font-size: 12px;padding: 3px 10px; border : 1px solid #555;background : #0f0;">Set</button><button id="removeCookie" style="color : #fff;font-size: 12px;padding: 3px 10px; border : 1px solid #555;background : #f00;">Remove</button></div>' +
-                    '<div id="cerror" style="color : #fff; background : #f00;"></div>' +
-                    '<span style="padding : 5px 8px; position : absolute; top : 0; right : 0; color : #f00; background : rgba(235,28,36,0.4);cursor : pointer;" id="removeWidget"> X </span>' +
-                    '<div id="optimizely_info_data" style="margin: 2px 0 0;">' +
-                    '</div>',
-                        container_styles = "position : fixed; z-index : 99999999; top : 10px;width: auto;min-width: 280px; left : 10px; padding : 5px; background : rgb(238, 241, 255); box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;";
+                let content = '<div><input type="text" style="margin:0;padding:2px 0;width: auto;font-size: '+this.font_size+';height : 25px;line-height : 14px;" placeholder="cookie name" id="cname_yuli" value="yy_qa" />' +
+                        '<button id="setCookie"  style="color : #eee;margin : 0;font-size: '+this.font_size+';padding: 3px 10px; border : 1px solid '+this.main_clr+';background : '+this.active_clr+';">Set</button><button id="removeCookie"  style="color : #fff;font-size: '+this.font_size+';padding: 3px 10px; border : 1px solid '+this.main_clr+';background : #f00;">Remove</button></div>' +
+                        '<div id="cerror" style="color : #fff; background : #f00;"></div>' +
+                        '<span id="removeWidget" style="padding : 5px 8px; position : absolute; top : 0; right : 0; color : #f00; background : rgba(235,28,36,0.4);cursor : pointer;" > X </span>' +
+                        '<div id="optimizely_info_data" style="margin: 2px 0 0;">' +
+                        '</div>',
+                        container_styles = "position : fixed; z-index : 99999999; top : 10px;width: auto;min-width: 280px; left : 10px; padding : 5px; background : "+this.bckgrnd_clr+"; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;color : "+this.main_clr+";";
                 let div = document.createElement("div");
                 div.id = "ccontainer_yuli";
                 div.style = container_styles;
