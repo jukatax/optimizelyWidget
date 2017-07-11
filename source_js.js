@@ -99,12 +99,14 @@ window.optimizely.push({
         var variations = {};
         var activeExp = [];
         if (window.optimizely && window.optimizely.variationNamesMap && optimizely.activeExperiments.length) {
-            Object.assign(variations,optimizely.variationNamesMap);
-            activeExp = activeExp.concat(optimizely.activeExperiments);
+                if(typeof Object.assign === "function"){Object.assign(variations,optimizely.variationNamesMap);}
+                else{variations = JSON.parse(JSON.stringify(optimizely.variationNamesMap));}
+                activeExp = activeExp.concat(optimizely.activeExperiments);
         }
         if (window.optimizely && window.optimizely.get('state').getVariationMap() && Object.getOwnPropertyNames(window.optimizely.get('state').getVariationMap()).length) {
-            Object.assign(variations,window.optimizely.get('state').getVariationMap());
-            activeExp = activeExp.concat(optimizely.get('state').getActiveExperimentIds());
+                if(typeof Object.assign === "function"){Object.assign(variations,window.optimizely.get('state').getVariationMap());}
+                else{variations = JSON.parse(JSON.stringify(window.optimizely.get('state').getVariationMap()));}
+                activeExp = activeExp.concat(optimizely.get('state').getActiveExperimentIds());
         }
 
         var data = optimizely.get('data');
