@@ -18,7 +18,7 @@ class optimizelyWidget {
                         var expires = "expires=" + d.toUTCString();
                         document.cookie = cname.value + "=1;path=/;domain=" + this.domain + ";" + expires;
                         cerror.innerHTML = "Cookie has been Set!";
-                        if (exdays == "-1") {
+                        if (exdays == -1 || exdays == '-1') {
                                 document.cookie = "optimizelySegments=0;path=/;domain=" + this.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
                                 document.cookie = "optimizelyBuckets=0;path=/;domain=" + this.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
                                 document.cookie = "optimizelyEndUserId=0;path=/;domain=" + this.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
@@ -32,7 +32,8 @@ class optimizelyWidget {
                 }
                 setTimeout(function () {
                         cerror.innerHTML = "";
-                        vm.setExperiment("&"+cname.value+"1");
+                        if( (exdays != -1 && !window.location.search) || (exdays != -1 && !window.location.search.match(cname.value+"=true")) ){vm.setExperiment("&"+cname.value+"=1");}
+                        else if( exdays == -1 && window.location.search && window.location.search.match(cname.value+"=1")){window.location.search = window.location.search.replace(cname.value+"=1" , "");}
                 }, 1000);
         }
 

@@ -62,7 +62,7 @@ window.optimizely.push({
                 var expires = "expires=" + d.toUTCString();
                 document.cookie = cname.value + "=1;path=/;domain="+domain+";" + expires;
                 cerror.innerHTML = "Cookie has been Set!";
-                if (exdays == "-1") {
+                if (exdays == -1 || exdays == '-1') {
                     document.cookie = "optimizelySegments=0;path=/;domain="+domain+";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
                     document.cookie = "optimizelyBuckets=0;path=/;domain="+domain+";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
                     document.cookie = "optimizelyEndUserId=0;path=/;domain="+domain+";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
@@ -76,7 +76,8 @@ window.optimizely.push({
             }
             setTimeout(function () {
                 cerror.innerHTML = "";
-                window.setExperiment("&"+cname.value+"=true");
+                if( (exdays != -1 && !window.location.search) || (exdays != -1 && !window.location.search.match(cname.value+"=true")) ){window.setExperiment("&"+cname.value+"=true");}
+                else if( exdays == -1 && window.location.search && window.location.search.match(cname.value+"=true")){window.location.search = window.location.search.replace(cname.value+"=true" , "");}
             }, 1000);
         };
         window.removeThis = function () {
