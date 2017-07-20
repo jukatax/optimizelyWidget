@@ -9,6 +9,7 @@ class optimizelyWidget {
         }
 
         setCookie(exdays) {
+                let vm = this;
                 var d = new Date(),
                         cname = document.getElementById("cname_yuli"),
                         cerror = document.getElementById("cerror");
@@ -31,6 +32,7 @@ class optimizelyWidget {
                 }
                 setTimeout(function () {
                         cerror.innerHTML = "";
+                        vm.setExperiment("&"+cname.value+"1");
                 }, 1000);
         }
 
@@ -40,10 +42,12 @@ class optimizelyWidget {
 
         setExperiment(variationId) {
                 var wls = window.location.search;
-                if(/optimizely_x/.test(wls)){
-                        window.location.search = wls.replace(/optimizely_x=\d+/ , "optimizely_x="+variationId);
-                }else{
+                if(Boolean(wls) && /optimizely_x/.test(wls) ){
+                        window.location.search = wls.replace(/optimizely_x=(\d+)?/ , "optimizely_x="+variationId);
+                }else if(Boolean(wls) && /\?/.test(wls)){
                         window.location.search = wls+"&optimizely_x="+variationId;
+                }else{
+                        window.location.search = "optimizely_x="+variationId;
                 }
         }
 

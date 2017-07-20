@@ -1,14 +1,14 @@
 /**
  * Optimizely X widget
  * Created by YYordanov on 11/03/17.
- * v3.7
+ * v3.9
  */
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
  ?optimizely_force_tracking=true
  */
 /*
-In order for thr log to work this script has to be injected before the call to Optimizely, in Tampermonkey set the script to be injected at "document start"
+In order for the log to work this script has to be injected before the call to Optimizely, in Tampermonkey set the script to be injected at "document start"
  */
 window.optimizely = window.optimizely || [];
 window.optimizely.push({
@@ -76,6 +76,7 @@ window.optimizely.push({
             }
             setTimeout(function () {
                 cerror.innerHTML = "";
+                window.setExperiment("&"+cname.value+"=true");
             }, 1000);
         };
         window.removeThis = function () {
@@ -83,10 +84,12 @@ window.optimizely.push({
         };
         window.setExperiment = function(variationId){
             var wls = window.location.search;
-            if(/optimizely_x/.test(wls)){
-                window.location.search = wls.replace(/optimizely_x=\d+/ , "optimizely_x="+variationId);
-            }else{
+            if(Boolean(wls) && /optimizely_x/.test(wls) ){
+                window.location.search = wls.replace(/optimizely_x=(\d+)?/ , "optimizely_x="+variationId);
+            }else if(Boolean(wls) && /\?/.test(wls)){
                 window.location.search = wls+"&optimizely_x="+variationId;
+            }else{
+                window.location.search = "optimizely_x="+variationId;
             }
         };
         var container_styles = "position : fixed; z-index : 999999999; top : 10px;width: auto;min-width: 280px; left : 10px; padding : 5px; background : "+bckgrnd_clr+"; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;color: "+main_clr+";";
