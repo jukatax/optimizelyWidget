@@ -1,7 +1,7 @@
 /**
  * Optimizely X widget
  * Created by YYordanov on 11/03/17.
- * v3.9.1
+ * v3.10.1
  */
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
@@ -46,10 +46,10 @@ window.optimizely.push({
     }
     requestAnimationFrame(poll4elems);
     function optimizelyWidget(){
-        var content = '<div><input type="text" style="margin:0;padding:2px 0;width: auto;font-size: '+font_size+';height : 25px;line-height : 14px;" placeholder="cookie name" id="cname_yuli" value="yy_qa" />' +
-            '<button onclick="setCookie(0.5)" style="color : #eee;margin : 0;font-size: 12px;padding: 3px 10px; border : 1px solid '+main_clr+';background : '+active_clr+';">Set</button><button onclick="setCookie(-1)" style="color : #fff;font-size: 12px;padding: 3px 10px; border : 1px solid '+main_clr+';background : #f00;">Remove</button></div>' +
+        var content = '<div><input type="text" style="margin:0;padding:2px 0;width: auto;display: inline-block;font-size: '+font_size+';height : 25px;line-height : 14px;" placeholder="cookie name" id="cname_yuli" value="yy_qa" />' +
+            '<button id="setcookie" style="color : #eee;width: auto;display: inline-block; height: auto;line-height: 14px;margin : 0;font-size: 12px;padding: 3px 10px; border : 1px solid '+main_clr+';background : '+active_clr+';">Set</button><button id="remcookie" style="color : #fff;font-size: 12px;padding: 3px 10px;width: auto; display: inline-block;height: auto;line-height: 14px; border : 1px solid '+main_clr+';background : #f00;">Remove</button></div>' +
             '<div id="cerror" style="color : #fff; background : #f00;"></div>' +
-            '<span style="padding : 5px 8px; position : absolute; top : 0; right : 0; color : #f00; background : rgba(235,28,36,0.4);cursor : pointer;" onclick="removeThis()"> X </span>' +
+            '<span id="removewidget" style="padding : 5px 8px; position : absolute; top : 0; right : 0; color : #f00; background : rgba(235,28,36,0.4);cursor : pointer;"> X </span>' +
             '<div id="optimizely_info_data" style="margin: 2px 0 0;">' +
             '</div>';
         var bdy = document.body;
@@ -100,22 +100,35 @@ window.optimizely.push({
         div.innerHTML = content;
         bdy.appendChild(div);
         document.querySelector("#ccontainer_yuli").setAttribute("style", container_styles);
+        setTimeout(function(){
+            document.querySelector("#setcookie").addEventListener("click",setCookie.bind(window,0.5) , true);
+            document.querySelector("#remcookie").addEventListener("click",setCookie.bind(window,-1) , true);
+            document.querySelector("#removewidget").addEventListener("click",removeThis, true);
+        },500);
         var variations = {};
         var activeExp = [];
         if (window.optimizely && window.optimizely.variationNamesMap && optimizely.activeExperiments.length) {
-                if(typeof Object.assign === "function"){Object.assign(variations,optimizely.variationNamesMap);}
-                else{variations = JSON.parse(JSON.stringify(optimizely.variationNamesMap));}
-                activeExp = activeExp.concat(optimizely.activeExperiments);
+            if(typeof Object.assign === "function"){Object.assign(variations,optimizely.variationNamesMap);}
+            else{variations = JSON.parse(JSON.stringify(optimizely.variationNamesMap));}
+            activeExp = activeExp.concat(optimizely.activeExperiments);
         }
         if (window.optimizely && window.optimizely.get('state').getVariationMap() && Object.getOwnPropertyNames(window.optimizely.get('state').getVariationMap()).length) {
-                if(typeof Object.assign === "function"){Object.assign(variations,window.optimizely.get('state').getVariationMap());}
-                else{variations = JSON.parse(JSON.stringify(window.optimizely.get('state').getVariationMap()));}
-                activeExp = activeExp.concat(optimizely.get('state').getActiveExperimentIds());
+            if(typeof Object.assign === "function"){Object.assign(variations,window.optimizely.get('state').getVariationMap());}
+            else{variations = JSON.parse(JSON.stringify(window.optimizely.get('state').getVariationMap()));}
+            activeExp = activeExp.concat(optimizely.get('state').getActiveExperimentIds());
         }
 
         var data = optimizely.get('data');
         console.log("Optimizely Experiments: ",data);
-
+        function KeyPress(e) {
+            var evtobj = window.event? event : e;
+            if ((evtobj.metaKey || evtobj.ctrlKey) && evtobj.shiftKey && evtobj.keyCode == 89 ) {
+                if(document.querySelector("#ccontainer_yuli")){
+                    document.querySelector("#ccontainer_yuli").classList.toggle("hide");
+                }
+            }
+        }
+        document.onkeydown = KeyPress;
         if(activeExp.length){
             activeExp.forEach(function (val, ind) {
                 var experiment = data.experiments[val];
@@ -137,4 +150,4 @@ window.optimizely.push({
         else {
             document.querySelector("#optimizely_info_data").innerHTML = "No experiment running!";
         }
-}
+    }
