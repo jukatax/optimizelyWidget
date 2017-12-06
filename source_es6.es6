@@ -99,12 +99,12 @@ class optimizelyWidget {
 
         init() {
                 let content = '<div><input type="text" style="margin:0;padding:2px 0;width: auto;display: inline-block;font-size: '+this.font_size+';height : 25px;line-height : 14px;" placeholder="cookie name" id="cname_yuli" value="yy_qa" />' +
-                        '<button id="setCookie"  style="color : #eee;width: auto;display: inline-block; height: auto;line-height: 14px;margin : 0;font-size: '+this.font_size+';padding: 3px 10px; border : 1px solid '+this.main_clr+';background : '+this.active_clr+';">Set</button><button id="removeCookie"  style="color : #fff;width: auto;display: inline-block; height: auto;line-height: 14px;font-size: '+this.font_size+';padding: 3px 10px; border : 1px solid '+this.main_clr+';background : #f00;">Remove</button></div>' +
+                        '<button id="setCookie"  style="color : #eee;width: auto;display: inline-block;float : none; height: auto;line-height: 14px;margin : 0;font-size: '+this.font_size+';padding: 3px 10px; border : 1px solid '+this.main_clr+';background : '+this.active_clr+';">Set</button><button id="removeCookie"  style="color : #fff;width: auto;display: inline-block;float : none; height: auto;line-height: 14px;margin : 0;font-size: '+this.font_size+';padding: 3px 10px; border : 1px solid '+this.main_clr+';background : #f00;">Remove</button></div>' +
                         '<div id="cerror" style="color : #fff; background : #f00;"></div>' +
                         '<span id="removeWidget" style="padding : 5px 8px; position : absolute; top : 0; right : 0; color : #f00; background : rgba(235,28,36,0.4);cursor : pointer;" > X </span>' +
                         '<div id="optimizely_info_data" style="margin: 2px 0 0;">' +
                         '</div>',
-                        container_styles = "position : fixed; z-index : 99999999; top : 10px;width: auto;min-width: 280px; left : 10px; padding : 5px; background : "+this.bckgrnd_clr+"; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;color : "+this.main_clr+";";
+                        container_styles = "position : fixed; z-index : 999999999; top : 10px;width: auto;min-width: 280px; left : 10px; padding : 5px; background : "+this.bckgrnd_clr+"; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;color : "+this.main_clr+";";
                 let div = document.createElement("div");
                 div.id = "ccontainer_yuli";
                 div.style = container_styles;
