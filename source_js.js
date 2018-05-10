@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Optimizely X Widget v6.0.5
+// @name         Optimizely X Widget v6.2.0
 // @namespace    https://*/*
-// @version      6.1.1
+// @version      6.2.0
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -16,7 +16,7 @@
 /**
  * Optimizely X widget
  * Created by YYordanov on 11/03/17.
- * v6.1.0
+ * v6.2.0
  */
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
@@ -42,7 +42,7 @@ Cmnd + Shift to hide/show teh widget
      all : all messages, including detailed debugging information (intended for developers)
      */
     window.widget = {
-        version: '6.1.1',
+        version: '6.2.0',
         styles: {
             bckgrnd_clr: '#f4f7f1',
             main_clr: '#19405b',
@@ -151,6 +151,25 @@ Cmnd + Shift to hide/show teh widget
             }, false);
             document.onkeydown = widget.toggleWidget;
         },
+        getOptlyServerSideTests : function(){
+            var divWrap = document.createElement("div");
+            divWrap.style = widget.styles.results;
+            var gettests = document.querySelectorAll('[data-experiment]');
+            if (gettests.length) {
+                widget.serverSideTests.push("#### Optly Server-side tests detected: ####");
+                Array.prototype.slice.call(gettests).forEach(function (val, ind, arr) {
+                    widget.serverSideTests.push(val.getAttribute('data-experiment'));
+                });
+            }else{
+                widget.serverSideTests.push("#### No Optly Server-side experiments running ####");
+            }
+            divWrap.innerHTML = "<ul>"+widget.serverSideTests.join("<br />")+"</ul>";
+            if(document.querySelector("#optlyServerSide")){
+                document.querySelector("#optlyServerSide").appendChild(divWrap);
+            }else{
+                widget.getOptlyServerSideTests();
+            }
+        },
         getOptlyClientSideTests: function () {
             var variations = {},
                 activeExp = [],
@@ -249,10 +268,19 @@ Cmnd + Shift to hide/show teh widget
             }
             //return Boolean((window.mboxCurrent && window.mboxCurrent.fe && window.mboxCurrent.fe.fd) || window.testversion);
         },
+        poll4OptlyServerSide : function(){
+            if(document.querySelectorAll('[data-experiment]') && document.querySelectorAll('[data-experiment]').length){
+                widget.getOptlyServerSideTests();
+            }else{
+                document.querySelector("#optlyServerSide").innerHTML = "<div style='"+widget.styles.results+"'>#### No Optly server-side experiments ####</div>";
+                return;
+            }
+        },
         init: function () {
             widget.createwidget();
             widget.poll4optlyX();
             widget.poll4target();
+            widget.poll4OptlyServerSide();
         }
     };
 
