@@ -1,7 +1,22 @@
+// ==UserScript==
+// @name         Optimizely X Widget v6.0.5
+// @namespace    https://*/*
+// @version      6.1.1
+// @encoding     utf-8
+// @description  Optimizely X Widget
+// @author       Yuliyan Yordanov
+// @match        https://*/*
+// @include      http://*/*
+// @grant        none
+// @updateURL    https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
+// @downloadURL  https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
+// @grant        unsafeWindow
+// @run-at       document-end
+// ==/UserScript==
 /**
  * Optimizely X widget
  * Created by YYordanov on 11/03/17.
- * v6.0.1
+ * v6.1.0
  */
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
@@ -27,7 +42,7 @@ Cmnd + Shift to hide/show teh widget
      all : all messages, including detailed debugging information (intended for developers)
      */
     window.widget = {
-        version: '6.1.0',
+        version: '6.1.1',
         styles: {
             bckgrnd_clr: '#f4f7f1',
             main_clr: '#19405b',
