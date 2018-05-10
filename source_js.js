@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Optimizely X Widget v6.2.0
+// @name         Optimizely X Widget v6.2.1
 // @namespace    https://*/*
-// @version      6.2.0
+// @version      6.2.1
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -13,18 +13,13 @@
 // @grant        unsafeWindow
 // @run-at       document-end
 // ==/UserScript==
-/**
- * Optimizely X widget
- * Created by YYordanov on 11/03/17.
- * v6.2.0
- */
+
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
  ?optimizely_force_tracking=true
  */
 /*
 In order for the log to work this script has to be injected before the call to Optimizely, in Tampermonkey set the script to be injected at "document start"
-Cmnd + Shift to hide/show teh widget
  */
 (function(window,document) {
     "use strict";
@@ -42,7 +37,7 @@ Cmnd + Shift to hide/show teh widget
      all : all messages, including detailed debugging information (intended for developers)
      */
     window.widget = {
-        version: '6.2.0',
+        version: '6.2.1',
         styles: {
             bckgrnd_clr: '#f4f7f1',
             main_clr: '#19405b',
@@ -67,7 +62,7 @@ Cmnd + Shift to hide/show teh widget
         start: 0,
         start2: 0,
         countMax: 4,
-        toggleWidget: function (e) {
+        toggleWidget: function (e) { //Cmnd + Shift + Y to hide/show the widget
             var evtobj = window.event ? event : e;
             if ((evtobj.metaKey || evtobj.ctrlKey) && evtobj.shiftKey && evtobj.keyCode === 89) {
                 if (document.querySelector("#ccontainer_yuli")) {
