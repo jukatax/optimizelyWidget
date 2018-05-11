@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Optimizely X Widget v6.2.1
+// @name         Optimizely X Widget v6.2.2
 // @namespace    https://*/*
-// @version      6.2.1
+// @version      6.2.2
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -37,7 +37,7 @@ In order for the log to work this script has to be injected before the call to O
      all : all messages, including detailed debugging information (intended for developers)
      */
     window.widget = {
-        version: '6.2.1',
+        version: '6.2.2',
         styles: {
             bckgrnd_clr: '#f4f7f1',
             main_clr: '#19405b',
@@ -48,8 +48,8 @@ In order for the log to work this script has to be injected before the call to O
             containerWrapper: "position : fixed; z-index : 9999999999; top : 10px;width: auto;min-width: 280px;max-width: 500px; left : 10px; padding : 8px 5px 5px; background : #f4f7f1; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;color: #19405b;",
             xwrapper: "padding : 5px 8px; position : absolute; top : 0; right : 0; color : #f00; background : rgba(235,28,36,0.4);cursor : pointer;",
             results: "font-size : 12px;border : 1px solid #19405b;border-radius : 3px;margin : 10px 0 5px;padding : 5px;",
-            inputField: "margin:0;padding:3px 0;width: auto;height: auto;display: inline-block;line-height : 14px;font-size: 12px;",
-            button: "float:none;color : #fff;font-size: 12px;padding: 3px 10px;width: auto; display: inline-block;height: auto;line-height: 14px;margin: 0; border : 1px solid #19405b;",
+            inputField: "margin:0;padding:3px 0;width: auto!important;height: auto!important;display: inline-block;line-height : 14px!important;font-size: 12px!important;",
+            button: "float:none;color : #fff!important;font-size: 12px!important;padding: 3px 10px;width: auto!important; display: inline-block;height: auto;line-height: 14px!important;margin: 0; border : 1px solid #19405b!important;",
             error: "color : #fff; background : #f00;",
             hide: "#ccontainer_yuli.hide{display : none!important;}"
         },
@@ -126,8 +126,8 @@ In order for the log to work this script has to be injected before the call to O
                 '<div id="optimizely_info_data" style="margin: 2px 24px 0 0;">' +
                 '<div>' +
                 '<input type="text" style="' + widget.styles.inputField + '" placeholder="cookie name" id="cname_yuli" value=' + widget.cookieName + ' />' +
-                '<button id="setcookie" style="' + widget.styles.button + ';background : ' + widget.styles.active_clr + ';">Set</button>' +
-                '<button id="remcookie" style="' + widget.styles.button + ';background : #f00;">Remove</button></div>' +
+                '<button id="setcookie" style="' + widget.styles.button + ';background : ' + widget.styles.active_clr + '!important;">Set</button>' +
+                '<button id="remcookie" style="' + widget.styles.button + ';background : #f00!important;">Remove</button></div>' +
                 '<div id="cerror" style="' + widget.styles.error + '"></div>' +
                 '</div>' +
                 '<div id="optlyX"></div>' +
