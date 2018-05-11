@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://*/*
-// @version      6.4.0
+// @version      6.4.1
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -11,7 +11,7 @@
 // @updateURL    https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
 // @downloadURL  https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
 // @grant        unsafeWindow
-// @run-at       document-end
+// @run-at       document-start
 // ==/UserScript==
 
 /*  @url params to force an experiment
@@ -37,7 +37,7 @@ In order for the log to work this script has to be injected before the call to O
      all : all messages, including detailed debugging information (intended for developers)
      */
     w.widget = {
-        version: '6.4.0',
+        version: '6.4.1',
         styles: {
             bckgrnd_clr: '#f4f7f1',
             main_clr: '#19405b',
