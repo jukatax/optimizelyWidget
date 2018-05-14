@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://*/*
-// @version      6.4.2
+// @version      6.4.3
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -37,7 +37,7 @@ In order for the log to work this script has to be injected before the call to O
      all : all messages, including detailed debugging information (intended for developers)
      */
     w.widget = {
-        version: '6.4.2',
+        version: '6.4.3',
         styles: {
             bckgrnd_clr: '#f4f7f1',
             main_clr: '#19405b',
@@ -88,7 +88,7 @@ In order for the log to work this script has to be injected before the call to O
                 d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
                 var expires = "expires=" + d.toUTCString();
                 document.cookie = cname + "=1;path=/;domain=" + widget.domain + ";" + expires;
-                cerror.innerHTML = "Cookie has been Set!";
+                cerror?(cerror.innerHTML = "Cookie has been Set!"):null;
                 if (exdays === -1 || exdays === '-1') {
                     document.cookie = "optimizelySegments=0;path=/;domain=" + widget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
                     document.cookie = "optimizelyEndUserId=0;path=/;domain=" + widget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
@@ -103,7 +103,7 @@ In order for the log to work this script has to be injected before the call to O
                     w.sessionStorage.clear();
                 }
             } else {
-                cerror.innerHTML = "You need to specify a name for the cookie";
+                ceror?(cerror.innerHTML = "You need to specify a name for the cookie"):null;
             }
             if(cname && cname.indexOf("ssp")===-1){
                 setTimeout(()=>{
@@ -120,7 +120,7 @@ In order for the log to work this script has to be injected before the call to O
                     }
                 }, 1000);
             }else{
-                setTimeout(()=> {cerror.innerHTML = "";},1000);
+                setTimeout(()=> {cerror?(cerror.innerHTML = ""):null;},1000);
             }
         },
         setExperiment: (variationId)=> {
@@ -191,10 +191,13 @@ In order for the log to work this script has to be injected before the call to O
         },
         setWidgetPosition : (pos,e)=>{
             let currentClass = w.widget.cookieName2.substring(3);
+            let wdget = d.getElementById("ccontainer_yuli");
             w.widget.setCookie("ssp"+currentClass,-1);
             w.widget.cookieName2 = "ssp"+pos;
-            d.getElementById("ccontainer_yuli").classList.remove(currentClass);
-            d.getElementById("ccontainer_yuli").classList.add(pos);
+            if(wdget){
+                wdget.classList.remove(currentClass);
+                wdget.classList.add(pos);
+            }
             w.widget.setCookie(w.widget.cookieName2,30);
         },
         getOptlyServerSideTests : ()=>{
