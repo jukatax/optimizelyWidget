@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://*/*
-// @version      6.4.1
+// @version      6.4.2
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -37,7 +37,7 @@ In order for the log to work this script has to be injected before the call to O
      all : all messages, including detailed debugging information (intended for developers)
      */
     w.widget = {
-        version: '6.4.1',
+        version: '6.4.2',
         styles: {
             bckgrnd_clr: '#f4f7f1',
             main_clr: '#19405b',
@@ -172,8 +172,12 @@ In order for the log to work this script has to be injected before the call to O
                 /* set widget position */
                 d.querySelectorAll("#ccontainer_yuli .positions span").forEach((val, ind)=> {
                     let pos = val.getAttribute("data-pos");
-                    val.removeEventListener("click", w.sswidget.setWidgetPosition.bind(null,pos,event));
+                    val.removeEventListener("click", w.widget.setWidgetPosition.bind(null,pos,event));
                 });
+                //remove styles
+                if(d.getElementById("optly_tests")){
+                    d.head.removeChild(d.getElementById("optly_tests"));
+                }
             }, false);
             d.onkeydown = widget.toggleWidget;
             d.getElementById("cname_yuli").addEventListener("keyup" , (e)=>{
