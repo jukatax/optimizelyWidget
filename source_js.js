@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://*/*
-// @version      6.6.8
+// @version      6.7.0
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -41,10 +41,28 @@ In order for the log to work this script has to be injected before the call to O
 
 
     // start the widget when the body is present
+(function (w, d) {
+    "use strict";
+    w.optimizely = w.optimizely || [];
+    w.optimizely.push({
+        type: 'log',
+        level: 'error'
+    });
+    /* @level : string
+     off : no messages
+     error : only errors (i.e. unexpected conditions that might cause the snippet to run improperly)
+     warn : unusual conditions that might indicate a misconfiguration
+     info: Recommended when you're trying to identify what's running and what's not.
+     debug: May be useful if you're trying to identify why something is or isn't running.
+     all : all messages, including detailed debugging information (intended for developers)
+     */
+
+
+    // start the widget when the body is present
     let startWidget = () => {
         if (d.querySelectorAll("head") && d.querySelectorAll("head").length === 1 && d.querySelectorAll("body") && d.querySelectorAll("body").length === 1) {
             w.widget = {
-                version: '6.6.8',
+                version: '6.7.0',
                 styles: {
                     bckgrnd_clr: '#f4f7f1',
                     main_clr: '#19405b',
@@ -220,11 +238,12 @@ In order for the log to work this script has to be injected before the call to O
                     var divWrap = d.createElement("div");
                     divWrap.style = widget.styles.results;
                     var gettests = w.optimizelyData;
-                    if (gettests.length) {
+                    if (gettests && gettests.length) {
                         widget.serverSideTests.push("#### Optly Server-side tests detected: ####");
                         Array.prototype.slice.call(gettests).forEach(function (val, ind, arr) {
-                            val.isActive ? (widget.serverSideTests.push(JSON.stringify(val))) : null;
+                            val ? (widget.serverSideTests.push(JSON.stringify(val))) : null;
                         });
+                        !widget.serverSideTests.length > 1 ? widget.serverSideTests[0] = "#### No Optly Server-side experiments running ####" : null;
                     } else {
                         widget.serverSideTests.push("#### No Optly Server-side experiments running ####");
                     }
@@ -305,7 +324,10 @@ In order for the log to work this script has to be injected before the call to O
                         console.log("bertie not available...exiting...");
                     } else {
                         let bertie_dom_log_wrapper = document.getElementById("bertie");
-                        //console.log("bertie loaded...");
+                        console.log("bertie loaded...");
+                        bertie.onAny(function (e) {
+                            console.log("bertie fired...: ", e.type)
+                        });
                         bertie.on("UISearch", function (e) {
                             //console.log("UISearch: ",e);
                             //console.log("UISearch e.searchTerm: ",e.searchTerm);
@@ -354,6 +376,7 @@ In order for the log to work this script has to be injected before the call to O
                             //console.log("UIExperimentRendered: ",e);
                             //console.log("UIExperimentRendered time: ",e);
                             bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIExperimentRendered</b></p>";
+                            widget.getOptlyServerSideTests();
                         });
                         //extra events
                         bertie.on("UIRenderContent", function (e) {
@@ -371,10 +394,24 @@ In order for the log to work this script has to be injected before the call to O
                         bertie.on("UIImpression", function (e) {
                             //console.log("UIImpression: ",e);
                             //console.log("UIImpression time: ",performance.now());
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIImpression</b></p>";
+                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIImpression:" + e.type + "</b>, identifier:" + e.identifier + " total items:" + e.payload.items.length + " </p>";
                         });
                         bertie.on("UIContentClicked", function (e) {
-                            //console.log("UIContentClicked: ",e);bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>UIContentClicked "+e+"</p>";
+                            //console.log("UIContentClicked: ",e);
+                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>UIContentClicked " + e.component + "</p>";
+                        });
+                        bertie.on("UIEventBasicEvent", function (e) {
+                            //console.log("UIEventBasicEvent: ",e);
+                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>UIEventBasicEvent.type:" + e.type + "</p>";
+                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>UIEventBasicEvent.value:" + e.value + "</p>";
+                        });
+                        bertie.on("tesco:UIRenderContent", function (e) {
+                            //console.log("UIEventBasicEvent: ",e);
+                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>tesco:UIRenderContent " + e + "</p>";
+                        });
+                        bertie.on("tesco:customerData", function (e) {
+                            //console.log("UIEventBasicEvent: ",e);
+                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>tesco:customerData " + e + "</p>";
                         });
                     }
                 }, //initBertie
