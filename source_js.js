@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://*/*
-// @version      6.7.0
+// @version      6.7.1
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -16,6 +16,7 @@
 // @run-at       document-start
 // ==/UserScript==
 /*jshint esversion:6*/
+/*globals document,window,console,requestAnimationFrame,setTimeout */
 /*  @url params to force an experiment
  ?optimizely_x=VARIATIONID&optimizely_token=PUBLIC
  ?optimizely_force_tracking=true
@@ -41,28 +42,10 @@ In order for the log to work this script has to be injected before the call to O
 
 
     // start the widget when the body is present
-(function (w, d) {
-    "use strict";
-    w.optimizely = w.optimizely || [];
-    w.optimizely.push({
-        type: 'log',
-        level: 'error'
-    });
-    /* @level : string
-     off : no messages
-     error : only errors (i.e. unexpected conditions that might cause the snippet to run improperly)
-     warn : unusual conditions that might indicate a misconfiguration
-     info: Recommended when you're trying to identify what's running and what's not.
-     debug: May be useful if you're trying to identify why something is or isn't running.
-     all : all messages, including detailed debugging information (intended for developers)
-     */
-
-
-    // start the widget when the body is present
     let startWidget = () => {
         if (d.querySelectorAll("head") && d.querySelectorAll("head").length === 1 && d.querySelectorAll("body") && d.querySelectorAll("body").length === 1) {
             w.widget = {
-                version: '6.7.0',
+                version: '6.7.1',
                 styles: {
                     bckgrnd_clr: '#f4f7f1',
                     main_clr: '#19405b',
@@ -235,20 +218,21 @@ In order for the log to work this script has to be injected before the call to O
                     w.widget.setCookie(w.widget.cookieName2, 30);
                 },
                 getOptlyServerSideTests: () => {
-                    var divWrap = d.createElement("div");
-                    divWrap.style = widget.styles.results;
-                    var gettests = w.optimizelyData;
-                    if (gettests && gettests.length) {
-                        widget.serverSideTests.push("#### Optly Server-side tests detected: ####");
-                        Array.prototype.slice.call(gettests).forEach(function (val, ind, arr) {
-                            val ? (widget.serverSideTests.push(JSON.stringify(val))) : null;
-                        });
-                        !widget.serverSideTests.length > 1 ? widget.serverSideTests[0] = "#### No Optly Server-side experiments running ####" : null;
-                    } else {
-                        widget.serverSideTests.push("#### No Optly Server-side experiments running ####");
-                    }
-                    divWrap.innerHTML = "<ul>" + widget.serverSideTests.join("<br />") + "</ul>";
                     if (d.querySelector("#optlyServerSide")) {
+                        var divWrap = d.getElementById("ss_tests") ? d.getElementById("ss_tests") : d.createElement("div");
+                        !d.getElementById("ss_tests") ? (divWrap.style = widget.styles.results) : null;
+                        !d.getElementById("ss_tests") ? (divWrap.id = "ss_tests") : null;
+                        var gettests = w.optimizelyData;
+                        if (gettests && gettests.length) {
+                            widget.serverSideTests.indexOf("#### Optly Server-side tests detected: ####") === -1 ? widget.serverSideTests.push("#### Optly Server-side tests detected: ####") : null;
+                            Array.prototype.slice.call(gettests).forEach(function (val, ind, arr) {
+                                val && widget.serverSideTests.indexOf(JSON.stringify(val)) === -1 ? (widget.serverSideTests.push(JSON.stringify(val))) : null;
+                            });
+                            !widget.serverSideTests.length > 1 ? widget.serverSideTests[0] = "#### No Optly Server-side experiments running ####" : null;
+                        } else {
+                            widget.serverSideTests.indexOf("#### No Optly Server-side experiments running ####") === -1 ? widget.serverSideTests.push("#### No Optly Server-side experiments running ####") : null;
+                        }
+                        divWrap.innerHTML = "<ul>" + widget.serverSideTests.join("<br />") + "</ul>";
                         d.querySelector("#optlyServerSide").appendChild(divWrap);
                     } else {
                         widget.getOptlyServerSideTests();
