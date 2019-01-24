@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://*/*
-// @version      6.7.1
+// @version      6.7.2
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -45,7 +45,7 @@ In order for the log to work this script has to be injected before the call to O
     let startWidget = () => {
         if (d.querySelectorAll("head") && d.querySelectorAll("head").length === 1 && d.querySelectorAll("body") && d.querySelectorAll("body").length === 1) {
             w.widget = {
-                version: '6.7.1',
+                version: '6.7.2',
                 styles: {
                     bckgrnd_clr: '#f4f7f1',
                     main_clr: '#19405b',
@@ -224,12 +224,16 @@ In order for the log to work this script has to be injected before the call to O
                         !d.getElementById("ss_tests") ? (divWrap.id = "ss_tests") : null;
                         var gettests = w.optimizelyData;
                         if (gettests && gettests.length) {
+                            widget.serverSideTests = [];
+                            d.querySelector("#optlyServerSide").innerHTML = "";
                             widget.serverSideTests.indexOf("#### Optly Server-side tests detected: ####") === -1 ? widget.serverSideTests.push("#### Optly Server-side tests detected: ####") : null;
                             Array.prototype.slice.call(gettests).forEach(function (val, ind, arr) {
                                 val && widget.serverSideTests.indexOf(JSON.stringify(val)) === -1 ? (widget.serverSideTests.push(JSON.stringify(val))) : null;
                             });
                             !widget.serverSideTests.length > 1 ? widget.serverSideTests[0] = "#### No Optly Server-side experiments running ####" : null;
                         } else {
+                            widget.serverSideTests = [];
+                            d.querySelector("#optlyServerSide").innerHTML = "";
                             widget.serverSideTests.indexOf("#### No Optly Server-side experiments running ####") === -1 ? widget.serverSideTests.push("#### No Optly Server-side experiments running ####") : null;
                         }
                         divWrap.innerHTML = "<ul>" + widget.serverSideTests.join("<br />") + "</ul>";
@@ -343,6 +347,7 @@ In order for the log to work this script has to be injected before the call to O
                             //console.log("app:routeChanged: ",e);
                             //console.log("app:routeChanged time: ",e);
                             bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>app:routeChanged</b>: " + e.path + "</p>";
+                            widget.getOptlyServerSideTests();
                         });
 
                         bertie.on("app:routeChanging", function (e) {
@@ -360,7 +365,7 @@ In order for the log to work this script has to be injected before the call to O
                             //console.log("UIExperimentRendered: ",e);
                             //console.log("UIExperimentRendered time: ",e);
                             bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIExperimentRendered</b></p>";
-                            widget.getOptlyServerSideTests();
+                            //widget.getOptlyServerSideTests();
                         });
                         //extra events
                         bertie.on("UIRenderContent", function (e) {
