@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://*/*
-// @version      6.7.4
+// @version      6.7.5
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -45,7 +45,7 @@ In order for the log to work this script has to be injected before the call to O
     let startWidget = () => {
         if (d.querySelectorAll("head") && d.querySelectorAll("head").length === 1 && d.querySelectorAll("body") && d.querySelectorAll("body").length === 1) {
             w.widget = {
-                version: '6.7.4',
+                version: '6.7.5',
                 styles: {
                     bckgrnd_clr: '#f4f7f1',
                     main_clr: '#19405b',
@@ -99,7 +99,7 @@ In order for the log to work this script has to be injected before the call to O
                     if (cname) {
                         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
                         var expires = "expires=" + d.toUTCString();
-                        document.cookie = cname + "=1;path=/;domain=" + widget.domain + ";" + expires;
+                        document.cookie = cname + "=true;path=/;domain=" + widget.domain + ";" + expires;
                         cerror ? (cerror.innerHTML = "Cookie has been Set!") : null;
                         if (exdays === -1 || exdays === '-1') {
                             document.cookie = "optimizelySegments=0;path=/;domain=" + widget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
@@ -150,7 +150,7 @@ In order for the log to work this script has to be injected before the call to O
                         var stls = d.createElement("style");
                         stls.id = "optly_tests";
                         stls.textContent = widget.styles.all;
-                        d.head.appendChild(stls);
+                        d.getElementsByTagName("head")[0].appendChild(stls);
                     }
                     var content = '<div>' +
                         '<div class="positions">' +
@@ -174,7 +174,7 @@ In order for the log to work this script has to be injected before the call to O
                     div.setAttribute("class", (d.cookie.match(/sspleft/ig) ? "left" : d.cookie.match(/sspright/ig) ? "right" : d.cookie.match(/sspcenter/ig) ? "center" : "left"));
                     div.innerHTML = content;
                     if (!d.querySelector("#ccontainer_yuli")) {
-                        d.body.appendChild(div);
+                        d.getElementsByTagName("body")[0].appendChild(div);
                     }
                 },
                 addDOMEvents: () => {
@@ -185,7 +185,7 @@ In order for the log to work this script has to be injected before the call to O
                         widget.setCookie(w.widget.cookieName, -1);
                     }, true);
                     d.querySelector("#removewidget").addEventListener("click", () => {
-                        d.body.removeChild(d.getElementById("ccontainer_yuli"));
+                        d.getElementById("ccontainer_yuli").parentNode.removeChild(d.getElementById("ccontainer_yuli"));
                         /* set widget position */
                         d.querySelectorAll("#ccontainer_yuli .positions span").forEach((val, ind) => {
                             let pos = val.getAttribute("data-pos");
@@ -193,7 +193,7 @@ In order for the log to work this script has to be injected before the call to O
                         });
                         //remove styles
                         if (d.getElementById("optly_tests")) {
-                            d.head.removeChild(d.getElementById("optly_tests"));
+                            d.getElementById("optly_tests").parentNode.removeChild(d.getElementById("optly_tests"));
                         }
                     }, false);
                     d.onkeydown = widget.toggleWidget;
@@ -314,9 +314,7 @@ In order for the log to work this script has to be injected before the call to O
                     } else {
                         let bertie_dom_log_wrapper = document.getElementById("bertie");
                         console.log("bertie loaded...");
-                        bertie.onAny(function (e) {
-                            console.log("bertie.onAny fired...: ", e)
-                        });
+                        bertie.onAny(function (e) { console.log("bertie.onAny fired...: ", e) });
                         bertie.on("UISearch", function (e) {
                             //console.log("UISearch: ",e);
                             //console.log("UISearch e.searchTerm: ",e.searchTerm);
@@ -406,7 +404,7 @@ In order for the log to work this script has to be injected before the call to O
                     }
                 }, //initBertie
                 poll4optlyX: () => {
-                    if (!Boolean(d.body && w.optimizely && (typeof w.optimizely.get === "function") && w.optimizely.get('state').getVariationMap())) {
+                    if (!Boolean(d.getElementsByTagName("body")[0] && w.optimizely && (typeof w.optimizely.get === "function") && w.optimizely.get('state').getVariationMap())) {
                         if (widget.optlyCounter < widget.countMax) {
                             widget.optlyCounter += 0.5;
                             setTimeout(widget.poll4optlyX, 250);
