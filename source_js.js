@@ -1,13 +1,11 @@
 // ==UserScript==
 // @name         Optimizely X Widget
-// @namespace    https://*/*
-// @version      6.7.5
+// @namespace    https://www.tesco.com
+// @version      6.7.6
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
-// @match        https://domain.here/*
-// @include      http://*/*
-// @include      https://*/*
+// @match        https://*.tesco.*/*
 // @exclude      /(condeco|github|aha|jira|timex|litmos|payslip|launchandlearn|app\.optimizely|webex|ukirp365)/
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
@@ -29,23 +27,14 @@ In order for the log to work this script has to be injected before the call to O
     w.optimizely = w.optimizely || [];
     w.optimizely.push({
         type: 'log',
-        level: 'error'
+        level: 'error' // off/error/warn/info/debug/all
     });
-    /* @level : string
-     off : no messages
-     error : only errors (i.e. unexpected conditions that might cause the snippet to run improperly)
-     warn : unusual conditions that might indicate a misconfiguration
-     info: Recommended when you're trying to identify what's running and what's not.
-     debug: May be useful if you're trying to identify why something is or isn't running.
-     all : all messages, including detailed debugging information (intended for developers)
-     */
-
 
     // start the widget when the body is present
     let startWidget = () => {
-        if (d.querySelectorAll("head") && d.querySelectorAll("head").length === 1 && d.querySelectorAll("body") && d.querySelectorAll("body").length === 1) {
+        if (d.getElementsByTagName("head")[0] && d.getElementsByTagName("head")[0] && d.getElementsByTagName("body") && d.getElementsByTagName("body")[0]) {
             w.widget = {
-                version: '6.7.5',
+                version: '6.7.6',
                 styles: {
                     bckgrnd_clr: '#f4f7f1',
                     main_clr: '#19405b',
@@ -75,7 +64,7 @@ In order for the log to work this script has to be injected before the call to O
                 serverSideTests: [],
                 targetTests: [],
                 cookieName: "_qa",
-                /* Initial cookie name for QA */
+
                 cookieName2: "ssp" + (d.cookie.match(/sspleft/ig) ? "left" : d.cookie.match(/sspright/ig) ? "right" : d.cookie.match(/sspcenter/ig) ? "center" : "left"),
                 domain: d.domain.split('.').length > 2 ? d.domain.split('.')[d.domain.split('.').length - 2] + "." + d.domain.split('.')[d.domain.split('.').length - 1] : d.domain,
                 count: 0,
@@ -186,7 +175,7 @@ In order for the log to work this script has to be injected before the call to O
                     }, true);
                     d.querySelector("#removewidget").addEventListener("click", () => {
                         d.getElementById("ccontainer_yuli").parentNode.removeChild(d.getElementById("ccontainer_yuli"));
-                        /* set widget position */
+
                         d.querySelectorAll("#ccontainer_yuli .positions span").forEach((val, ind) => {
                             let pos = val.getAttribute("data-pos");
                             val.removeEventListener("click", w.widget.setWidgetPosition.bind(null, pos));
@@ -200,7 +189,7 @@ In order for the log to work this script has to be injected before the call to O
                     d.getElementById("cname_yuli").addEventListener("keyup", (e) => {
                         w.widget.cookieName = e.target.value;
                     });
-                    /* set widget position */
+
                     d.querySelectorAll("#ccontainer_yuli .positions span").forEach((val, ind) => {
                         let pos = val.getAttribute("data-pos");
                         val.addEventListener("click", w.widget.setWidgetPosition.bind(null, pos), false);
@@ -228,10 +217,7 @@ In order for the log to work this script has to be injected before the call to O
                             d.querySelector("#optlyServerSide").innerHTML = "";
                             widget.serverSideTests.indexOf("#### Optly Server-side tests: ####") === -1 ? widget.serverSideTests.push("#### Optly Server-side tests: ####") : null;
                             widget.serverSideTests.push(JSON.stringify(gettests));
-                            /*Array.prototype.slice.call(gettests).forEach(function (val, ind, arr) {
-                                val && widget.serverSideTests.indexOf(JSON.stringify(val)) === -1 ? (widget.serverSideTests.push(JSON.stringify(val))) : null;
-                            });
-                            !widget.serverSideTests.length>1?widget.serverSideTests[0]="#### No Optly Server-side experiments running ####":null;*/
+
                         } else {
                             widget.serverSideTests = [];
                             d.querySelector("#optlyServerSide").innerHTML = "";
@@ -261,7 +247,7 @@ In order for the log to work this script has to be injected before the call to O
                             var varName = variations[val].name ? variations[val].name : variations[val];
                             var divWrap = d.createElement("div");
                             divWrap.innerHTML = "<div id=\"test_id_" + ind + "\" style='font-size : " + widget.styles.font_size + ";border : 1px solid " + widget.styles.main_clr + ";border-radius : 3px;margin : 0 0 5px;padding : 5px;'>ID: " + val + ",rv:<span id=\"test_version\">" + (optimizely.get('data').revision || optimizely.revision) + "</span><br />" + experiment.name + " </div>";
-                            if ( /*typeof varName === "string"*/ true) {
+                            if (true) {
                                 d.querySelector("#optimizely_info_data").appendChild(divWrap);
                             }
 
@@ -278,36 +264,7 @@ In order for the log to work this script has to be injected before the call to O
                         d.querySelector("#optlyX").innerHTML = "<div style='" + widget.styles.results + "'>#### No Optimizely experiments running ####</div>";
                     }
                 },
-                /*getTargetTests: () => {
-                    var divWrap = d.createElement("div"),
-                        to, tests;
-                    divWrap.style = widget.styles.results;
-                    if (!widget.isTargetPresent) {
-                        if ((w.adobe && w.adobe.target && w.adobe.target.VERSION) || w.mbox) {
-                            widget.isTargetPresent = true;
-                        }
-                    }
-                    //var tests = w.mboxCurrent.fe.fd.match(/\<\!\-\-\n(.*\n)+\-\-\>/gi);
-                    tests = (w.mboxCurrent && w.mboxCurrent.fe && w.mboxCurrent.fe.fd) ? w.mboxCurrent.fe.fd.match(/campaign:.*\nexperience:.*\n/gi) : w.testversion;
-                    if (tests && tests.length && !tests.substring) {
-                        widget.targetTests.push("#### Target tests detected: ####");
-                        tests.forEach(function (val, ind, arr) {
-                            widget.targetTests.push(val);
-                        });
-                    } else if (tests && tests.length) {
-                        widget.targetTests.push("#### Target tests detected: ####");
-                        widget.targetTests.push(tests.replace(/,campaign/gi, "<br />campaign"));
-                    } else {
-                        widget.targetTests.push("#### No Target experiments running ####");
-                    }
-                    divWrap.innerHTML = widget.targetTests.join("<br />");
-                    if (d.querySelector("#target")) {
-                        d.querySelector("#target").appendChild(divWrap);
-                    } else {
-                        widget.getTargetTests();
-                    }
 
-                },*/
                 initBertie: () => {
                     if (!(bertie && bertie.on)) {
                         console.log("bertie not available...exiting...");
@@ -416,20 +373,6 @@ In order for the log to work this script has to be injected before the call to O
                         widget.getOptlyClientSideTests();
                     }
                 },
-                /*poll4target: () => {
-                    if (!Boolean((w.mboxCurrent && w.mboxCurrent.fe && w.mboxCurrent.fe.fd) || w.testversion || w.mboxVersion)) {
-                        if (widget.targetCounter < widget.countMax) {
-                            widget.targetCounter += 0.5;
-                            setTimeout(widget.poll4target, 250);
-                        } else {
-                            d.querySelector("#target").innerHTML = "<div style='" + widget.styles.results + "'>#### No Target present ####</div>";
-                            return;
-                        }
-                    } else {
-                        widget.getTargetTests();
-                    }
-                    //return Boolean((w.mboxCurrent && w.mboxCurrent.fe && w.mboxCurrent.fe.fd) || w.testversion);
-                },*/
                 poll4OptlyServerSide: () => {
                     if (typeof window.optimizelyData === "object") {
                         widget.getOptlyServerSideTests();
