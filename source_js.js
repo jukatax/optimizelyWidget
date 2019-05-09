@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://www.tesco.com
-// @version      6.7.6
+// @version      6.7.7
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -34,7 +34,7 @@ In order for the log to work this script has to be injected before the call to O
     let startWidget = () => {
         if (d.getElementsByTagName("head")[0] && d.getElementsByTagName("head")[0] && d.getElementsByTagName("body") && d.getElementsByTagName("body")[0]) {
             w.widget = {
-                version: '6.7.6',
+                version: '6.7.7',
                 styles: {
                     bckgrnd_clr: '#f4f7f1',
                     main_clr: '#19405b',
@@ -49,15 +49,15 @@ In order for the log to work this script has to be injected before the call to O
                     button: "float:none;color : #fff!important;font-size: 12px!important;padding: 3px 10px;width: auto!important; display: inline-block;height: auto;line-height: 14px!important;margin: 0; border : 1px solid #19405b!important;",
                     error: "color : #fff; background : #f00;",
                     hide: "#ccontainer_yuli.hide, #ccontainer_yuli .hide{display : none!important;}",
-                    all: '#ccontainer_yuli{position : fixed; z-index : 9999999999; top : 10px;width: auto;min-width: 280px;max-width: 500px; left : 10px; padding : 12px 5px 5px; background : #f4f7f1; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;color: #19405b;font-family : Helvetica, Arial;font-size: 12px;border-radius: 3px;transition : left 1s ease-in-out;max-height: 100%;overflow-y: scroll;}' +
+                    all: '#ccontainer_yuli{position : fixed; z-index : 9999999999; top : 10px;width: auto;min-width: 280px;max-width: 440px; left : 10px; padding : 12px 5px 5px; background : #f4f7f1; box-shadow : 0 0 5px #555; -moz-box-shadow : 0 0 5px #555; -webkit-box-shadow : 0 0 5px #555;color: #19405b;font-family : Helvetica, Arial;font-size: 12px;border-radius: 3px;transition : left 1s ease-in-out;max-height: 100%;overflow-y: scroll;}' +
                         '#ccontainer_yuli div{text-align:left;}' +
                         '#ccontainer_yuli #optlyServerSide div ul{padding:0;margin: 0;}' +
                         '#ccontainer_yuli .positions{ font-size : 0.8em;line-height : 8px;font-style: italic;display: flex; justify-content: space-around; align-items : center;}' +
                         '#ccontainer_yuli .positions span{ display : block; }' +
                         '#ccontainer_yuli .positions span:hover{ cursor:pointer; text-decoration : underline; }' +
-                        '#ccontainer_yuli.center{left : calc(50% - 165px);}' +
+                        '#ccontainer_yuli.center{left : calc(50% - 200px);}' +
                         '#ccontainer_yuli.left{left : 10px;}' +
-                        '#ccontainer_yuli.right{left  :calc(100% - 340px);}' +
+                        '#ccontainer_yuli.right{left  :calc(100% - 440px);}' +
                         '#ccontainer_yuli.hide{display : none!important;}'
                 },
                 clientSideTests: [],
