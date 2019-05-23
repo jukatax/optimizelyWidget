@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://www.tesco.com
-// @version      6.7.7
+// @version      6.8.0
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -34,7 +34,8 @@ In order for the log to work this script has to be injected before the call to O
     let startWidget = () => {
         if (d.getElementsByTagName("head")[0] && d.getElementsByTagName("head")[0] && d.getElementsByTagName("body") && d.getElementsByTagName("body")[0]) {
             w.widget = {
-                version: '6.7.7',
+                version: '6.8.0',
+                name: "::yy-optlyWidget::",
                 styles: {
                     bckgrnd_clr: '#f4f7f1',
                     main_clr: '#19405b',
@@ -60,6 +61,7 @@ In order for the log to work this script has to be injected before the call to O
                         '#ccontainer_yuli.right{left  :calc(100% - 440px);}' +
                         '#ccontainer_yuli.hide{display : none!important;}'
                 },
+                logstyles: "background:orange;color:#000;padding:2px 4px;",
                 clientSideTests: [],
                 serverSideTests: [],
                 targetTests: [],
@@ -81,6 +83,9 @@ In order for the log to work this script has to be injected before the call to O
                         }
                     }
                 },
+                log: (...msg) => {
+                    console.log.call(null, ("%c" + widget.name), widget.logstyles, ...msg);
+                },
                 setCookie: (name, exdays) => {
                     var d = new Date(),
                         cname = name,
@@ -100,8 +105,8 @@ In order for the log to work this script has to be injected before the call to O
                             document.cookie = "optimizelySegments=0;path=/;domain=" + widget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
                             document.cookie = "optimizelyPendingLogEvents=0;path=/;domain=" + widget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
                             document.cookie = cname + "=0;path=/;domain=" + widget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                            w.localStorage.clear();
-                            w.sessionStorage.clear();
+                            //w.localStorage.clear();
+                            //w.sessionStorage.clear();
                         }
                     } else {
                         ceror ? (cerror.innerHTML = "You need to specify a name for the cookie") : null;
@@ -168,7 +173,7 @@ In order for the log to work this script has to be injected before the call to O
                 },
                 addDOMEvents: () => {
                     d.querySelector("#setcookie").addEventListener("click", () => {
-                        widget.setCookie(w.widget.cookieName, 0.5);
+                        widget.setCookie(w.widget.cookieName, 60);
                     }, true);
                     d.querySelector("#remcookie").addEventListener("click", () => {
                         widget.setCookie(w.widget.cookieName, -1);
@@ -267,97 +272,58 @@ In order for the log to work this script has to be injected before the call to O
 
                 initBertie: () => {
                     if (!(bertie && bertie.on)) {
-                        console.log("bertie not available...exiting...");
+                        widget.log("bertie not available...exiting...");
                     } else {
                         let bertie_dom_log_wrapper = document.getElementById("bertie");
-                        console.log("bertie loaded...");
-                        bertie.onAny(function (e) { console.log("bertie.onAny fired...: ", e) });
-                        bertie.on("UISearch", function (e) {
-                            //console.log("UISearch: ",e);
-                            //console.log("UISearch e.searchTerm: ",e.searchTerm);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UISearch e.searchTerm</b>: " + e.searchTerm + "</p>";
-                        });
-                        bertie.on("siteData", function (e) {
-                            bertie_dom_log_wrapper.innerHTML = "#### Bertie events ####<br />";
-                            //console.log("siteData: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>siteData</b>: " + e.country + " - " + e.storeId + " - " + e.buildVersion + "</p>";
-                        });
-                        bertie.on("customerData", function (e) {
-                            //console.log("customerData: ",e);
-                            //console.log("customerData time: ",e);
-                            document.getElementById("bertie").classList.remove("hide");
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>customerData</b>: " + JSON.stringify(e.flags) + "</p>";
-                        });
-                        bertie.on("pageData", function (e) {
-                            //gStart = e;
-                            //console.log("pageData: ",e);
-                            //console.log("pageData time: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>pageData</b>: " + e.superDepartment + " " + e.pageTitle + "</p>";
-                        });
-                        bertie.on("UIEventBasket", function (e) {
-                            //console.log("UIEventBasket: ",e);
-                            //console.log("UIEventBasket time: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIEventBasket</b>: " + e.type + "</p>";
-                        });
-                        bertie.on("app:routeChanged", function (e) {
-                            //console.log("app:routeChanged: ",e);
-                            //console.log("app:routeChanged time: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>app:routeChanged</b>: " + e.path + "</p>";
-                            widget.getOptlyServerSideTests();
+                        widget.log("bertie loaded...");
+                        bertie.onAny(function (e) {
+                            widget.log(" bertie.onAny fired...: ", e);
+                            var type = e.type || e["@type"];
+                            bertie_dom_log_wrapper.classList.remove("hide");
+                            bertie_dom_log_wrapper.innerHTML = !(bertie_dom_log_wrapper.textContent.match(type)) ? bertie_dom_log_wrapper.innerHTML + "<p><b>" + type + "</b></p>" : "";
+                            if (e && type && type === "tesco:UIExperimentRendered") {
+                                widget.getOptlyServerSideTests();
+                                /*try {
+     var allCurrentArray = [],
+          todayDate = e && e.timestamp ? e.timestamp.substring(0, e.timestamp.indexOf("T")) : (new Date()).toLocaleDateString().split("/").reverse().join("-"),
+          expNamesFromStorage = [];
+
+     // Get all previously seen experiments if any
+     (localStorage && localStorage.getItem('OptVars')) ? (expNamesFromStorage = JSON.parse(localStorage.getItem('OptVars'))) : null;
+
+     // Loop through all currently requested experiments from the event and check if they exist in previously seen
+     if (e && e.experiments && typeof e.experiments.push === "function" && e.experiments.length) {
+          e.experiments.map(function (val, ind, arr) {
+               var tmpExpName_RExp = new RegExp(val.experimentName + "-" + val.variationKey, "ig");
+               // push only if localStorage was empty || (there are experiments in the localStorage array && the current experiment-variant combo do not exist in there)
+               if ( !expNamesFromStorage.length || (expNamesFromStorage.length && !(JSON.stringify(expNamesFromStorage).match(tmpExpName_RExp)))) {
+                    expNamesFromStorage.push({ "V": val.experimentName + "-" + val.variationKey, "D": todayDate });
+               }
+          });
+     } else {
+          throw new Error("Can't work with event data: experiments is either undefined, not an array or empty"); //exit
+     }
+
+     // Set evars in _satellite
+     if (window._satellite && typeof window._satellite.setVar === "function") {
+          window._satellite.setVar('busExpTodayDate', todayDate);
+          window._satellite.setVar('busExpCurrent', expNamesFromStorage);
+     } else {
+          throw new Error("Can't send data: _satellite seem to be undefined"); //exit
+     }
+
+     // Store all experiments - current and past in localStorage. Will overwrite existing value or set new one if it didn't exist
+     if (localStorage) {
+          localStorage.setItem('OptVars', JSON.stringify(expNamesFromStorage));
+     } else {
+          throw new Error("Can't store data: localStorage seem to be  undefined"); //exit
+     }
+} catch (err) {
+     console.log("Error while trying to store and send experiments: ", err);
+}*/
+                            }
                         });
 
-                        bertie.on("app:routeChanging", function (e) {
-                            //console.log("app:routeChanged: ",e);
-                            //console.log("app:routeChanged time: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>app:routeChanged</b>: " + e.path + "</p>";
-                        });
-                        bertie.on("UIEventFilterOp", function (e) {
-                            //console.log("UIEventFilterOp: ",e);
-                            //console.log("UIEventFilterOp time: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIEventFilterOp</b></p>";
-                        });
-
-                        bertie.on("UIExperimentRendered", function (e) {
-                            //console.log("UIExperimentRendered: ",e);
-                            //console.log("UIExperimentRendered time: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIExperimentRendered</b></p>";
-                            //widget.getOptlyServerSideTests();
-                        });
-                        //extra events
-                        bertie.on("UIRenderContent", function (e) {
-                            //console.log("UIRenderContent: ",e);
-                            //console.log("UIRenderContent time: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIRenderContent</b></p>";
-                        });
-                        //extra events
-                        bertie.on("UIEventSlotBooked", function (e) {
-                            //console.log("UIEventSlotBooked: ",e);
-                            //console.log("UIEventSlotBooked time: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIEventSlotBooked</b>:" + e.locationId + "</p>";
-                        });
-                        // !!!!!! ======== handle pagination ======== !!!!!!!
-                        bertie.on("UIImpression", function (e) {
-                            //console.log("UIImpression: ",e);
-                            //console.log("UIImpression time: ",performance.now());
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p><b>UIImpression:" + e.type + "</b>, identifier:" + e.identifier + " total items:" + e.payload.items.length + " </p>";
-                        });
-                        bertie.on("UIContentClicked", function (e) {
-                            //console.log("UIContentClicked: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>UIContentClicked " + e.component + "</p>";
-                        });
-                        bertie.on("UIEventBasicEvent", function (e) {
-                            //console.log("UIEventBasicEvent: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>UIEventBasicEvent.type:" + e.type + "</p>";
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>UIEventBasicEvent.value:" + e.value + "</p>";
-                        });
-                        bertie.on("tesco:UIRenderContent", function (e) {
-                            //console.log("UIEventBasicEvent: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>tesco:UIRenderContent " + e + "</p>";
-                        });
-                        bertie.on("tesco:customerData", function (e) {
-                            //console.log("UIEventBasicEvent: ",e);
-                            bertie_dom_log_wrapper.innerHTML = bertie_dom_log_wrapper.innerHTML + "<p>tesco:customerData " + e + "</p>";
-                        });
                     }
                 }, //initBertie
                 poll4optlyX: () => {
