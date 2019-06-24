@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://www.tesco.com
-// @version      6.8.2
+// @version      6.8.4
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -22,7 +22,7 @@
 /*
 In order for the log to work this script has to be injected before the call to Optimizely, in Tampermonkey set the script to be injected at "document start"
  */
-if (window.location.href === document.location.href && !document.location.href.match(/assets/ig)) {
+if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)) {
     (function (w, d) {
         "use strict";
         w.optimizely = w.optimizely || [];
@@ -30,7 +30,7 @@ if (window.location.href === document.location.href && !document.location.href.m
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
         });
-        const VERSION = "6.8.2";
+        const VERSION = "6.8.4";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
         function _log(...msg) {
@@ -269,8 +269,8 @@ if (window.location.href === document.location.href && !document.location.href.m
                                     var div = d.createElement("div");
                                     div.style = "margin : 0;padding : 0 0 0 10px;";
                                     var isActive = (varName === val.name) ? true : false;
-                                    var styles = 'color:' + widget.styles.active_clr + ';';
-                                    div.innerHTML = isActive ? "<div style=" + styles + "><span id=\"test_name\">" + val.name + " - " + val.id + "<span style='font-style:italic;font-size:'+widget.styles.font_size+';'>(active)</span></div>" : "<div><span id=\"test_name\">" + val.name + " - " + val.id + "</span> - <a href='#' style=" + styles + " onclick=\"widget.setExperiment(" + val.id + ")\">activate</a></div>";
+                                    var styles = 'color:' + w.optlywidget.styles.active_clr + ';';
+                                    div.innerHTML = isActive ? "<div style=" + styles + "><span id=\"test_name\">" + val.name + " - " + val.id + "<span style='font-style:italic;font-size:'+w.optlywidget.styles.font_size+';'>(active)</span></div>" : "<div><span id=\"test_name\">" + val.name + " - " + val.id + "</span> - <a href='#' style=" + styles + " onclick=\"widget.setExperiment(" + val.id + ")\">activate</a></div>";
                                     d.querySelector("#test_id_" + ind).appendChild(div);
                                 });
                             });
