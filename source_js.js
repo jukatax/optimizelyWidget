@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://www.tesco.com
-// @version      6.8.4
+// @version      6.8.5
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -30,7 +30,7 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
         });
-        const VERSION = "6.8.4";
+        const VERSION = "6.8.5";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
         function _log(...msg) {
@@ -261,18 +261,17 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                                 var varName = variations[val].name ? variations[val].name : variations[val];
                                 var divWrap = d.createElement("div");
                                 divWrap.innerHTML = "<div id=\"test_id_" + ind + "\" style='font-size : " + w.optlywidget.styles.font_size + ";border : 1px solid " + w.optlywidget.styles.main_clr + ";border-radius : 3px;margin : 0 0 5px;padding : 5px;'>ID: " + val + ",rv:<span id=\"test_version\">" + (optimizely.get('data').revision || optimizely.revision) + "</span><br />" + experiment.name + " </div>";
-                                if (true) {
-                                    d.querySelector("#optimizely_info_data").appendChild(divWrap);
+                                if (!d.querySelector("#test_id_" + ind)) {
+                                    d.querySelector("#optlyX").appendChild(divWrap);
+                                    experiment.variations.forEach(function (val, indx) {
+                                        var div = d.createElement("div");
+                                        div.style = "margin : 0;padding : 0 0 0 10px;";
+                                        var isActive = (varName === val.name) ? true : false;
+                                        var styles = 'color:' + w.optlywidget.styles.active_clr + ';';
+                                        div.innerHTML = isActive ? "<div style=" + styles + "><span id=\"test_name\">" + val.name + " - " + val.id + "<span style='font-style:italic;font-size:'+w.optlywidget.styles.font_size+';'>(active)</span></div>" : "<div><span id=\"test_name\">" + val.name + " - " + val.id + "</span> - <a href='#' style=" + styles + " onclick=\"widget.setExperiment(" + val.id + ")\">activate</a></div>";
+                                        d.querySelector("#test_id_" + ind).appendChild(div);
+                                    });
                                 }
-
-                                experiment.variations.forEach(function (val, indx) {
-                                    var div = d.createElement("div");
-                                    div.style = "margin : 0;padding : 0 0 0 10px;";
-                                    var isActive = (varName === val.name) ? true : false;
-                                    var styles = 'color:' + w.optlywidget.styles.active_clr + ';';
-                                    div.innerHTML = isActive ? "<div style=" + styles + "><span id=\"test_name\">" + val.name + " - " + val.id + "<span style='font-style:italic;font-size:'+w.optlywidget.styles.font_size+';'>(active)</span></div>" : "<div><span id=\"test_name\">" + val.name + " - " + val.id + "</span> - <a href='#' style=" + styles + " onclick=\"widget.setExperiment(" + val.id + ")\">activate</a></div>";
-                                    d.querySelector("#test_id_" + ind).appendChild(div);
-                                });
                             });
                         } else {
                             d.querySelector("#optlyX").innerHTML = "<div style='" + w.optlywidget.styles.results + "'>#### No Optimizely experiments running ####</div>";
