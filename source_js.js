@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://www.tesco.com
-// @version      6.8.5
+// @version      6.8.7
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
 // @match        https://*.tesco.*/*
-// @exclude      /(condeco|github|aha|jira|timex|litmos|payslip|launchandlearn|app\.optimizely|webex|ukirp365)/
+// @exclude      /(ourtesco|condeco|github|aha|jira|timex|litmos|payslip|launchandlearn|app\.optimizely|webex|accessmanager|ukirp365|yammer|learningattesco|myaccount\.global)/
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
 // @downloadURL  https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
@@ -30,7 +30,7 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
         });
-        const VERSION = "6.8.5";
+        const VERSION = "6.8.7";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
         function _log(...msg) {
@@ -82,8 +82,8 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                     sstestsCounter: 0,
                     bertieCounter: 0,
                     countMax: 4,
-                    toggleWidget: (e) => { //Cmnd + Shift + Y to hide/show the widget
-                        var evtobj = w.event ? event : e;
+                    toggleWidget: (e) => { //Cmnd/Ctrl + Shift + Y to hide/show the widget
+                        var evtobj = e; //w.optlywidget.log(evtobj.keyCode);
                         if ((evtobj.metaKey || evtobj.ctrlKey) && evtobj.shiftKey && evtobj.keyCode === 89) {
                             if (d.querySelector("#ccontainer_yuli")) {
                                 d.querySelector("#ccontainer_yuli").classList.toggle("hide");
@@ -155,7 +155,7 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                         }
                         var content = '<div>' +
                             '<div class="positions">' +
-                            '<span style="' + w.optlywidget.styles.versionWrapper + '">v: ' + w.optlywidget.version + '</span> <span data-pos="left">left</span> <span data-pos="center">center</span> <span data-pos="right">right</span>   <span id="removewidget" style="' + w.optlywidget.styles.xwrapper + '"> X </span>' +
+                            '<span style="' + w.optlywidget.styles.versionWrapper + '">v: ' + w.optlywidget.version + '&nbsp;&nbsp;&nbsp; Ctrl+Shift+Y to toggle</span> <span data-pos="left">left</span> <span data-pos="center">center</span> <span data-pos="right">right</span>   <span id="removewidget" style="' + w.optlywidget.styles.xwrapper + '"> X </span>' +
                             '</div>' +
                             '<div id="optimizely_info_data" style="margin: 2px 24px 0 0;">' +
                             '<div>' +
@@ -286,13 +286,18 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                             //w.optlywidget.log("bertie loaded...");
                             w.brty = "";
                             bertie.onAny(function (e) {
-                                var type = e.type || e["@type"] || e._eventType;
-                                type.match(/siteData/i) ? bertie_dom_log_wrapper.innerHTML = "" : null;
+                                var type = e["@type"] || e.type || e._eventType;
+                                //type.match(/siteData/i)?bertie_dom_log_wrapper.innerHTML="":null;
                                 //w.optlywidget.log(" bertie.onAny fired...: ",type," , exists already?- ",!Boolean(bertie_dom_log_wrapper.textContent.match(type)));
                                 bertie_dom_log_wrapper ?
                                     (
                                         bertie_dom_log_wrapper.classList.remove("hide"),
-                                        bertie_dom_log_wrapper.innerHTML = !Boolean(bertie_dom_log_wrapper.textContent.match(type)) ? bertie_dom_log_wrapper.innerHTML + "<p><b>" + type + "</b></p>" + w.brty : bertie_dom_log_wrapper.innerHTML,
+                                        bertie_dom_log_wrapper.innerHTML =
+                                        !Boolean(bertie_dom_log_wrapper.textContent.match(type)) && (type === "tesco:UIExperimentRendered" || type.match("UIExperiment")) ?
+                                            bertie_dom_log_wrapper.innerHTML + "<p><b>" + type + "</b> - <b>" + e.experimentName + "</b> - <b>" + e.variationKey + "</b></p>" + w.brty :
+                                            !Boolean(bertie_dom_log_wrapper.textContent.match(type)) ?
+                                                bertie_dom_log_wrapper.innerHTML + "<p><b>" + type + "</b></p>" + w.brty :
+                                                bertie_dom_log_wrapper.innerHTML,
                                         w.brty = ""
                                     )
                                     : w.brty += "<p><b>" + type + "</b></p>";
