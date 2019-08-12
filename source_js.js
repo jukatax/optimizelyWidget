@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://www.tesco.com
-// @version      6.8.7
+// @version      6.8.8
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -30,7 +30,7 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
         });
-        const VERSION = "6.8.7";
+        const VERSION = "6.8.8";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
         function _log(...msg) {
@@ -187,12 +187,16 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                             w.optlywidget.setCookie(w.optlywidget.cookieName, -1);
                         }, true);
                         d.querySelector("#removewidget").addEventListener("click", () => {
-                            d.getElementById("ccontainer_yuli").parentNode.removeChild(d.getElementById("ccontainer_yuli"));
-
-                            d.querySelectorAll("#ccontainer_yuli .positions span").forEach((val, ind) => {
-                                let pos = val.getAttribute("data-pos");
-                                val.removeEventListener("click", w.optlywidget.setWidgetPosition.bind(null, pos));
-                            });
+                            if (d.querySelectorAll("#ccontainer_yuli .positions span").length) {
+                                d.querySelectorAll("#ccontainer_yuli .positions span").forEach((val, ind) => {
+                                    let pos = val.getAttribute("data-pos");
+                                    val.removeEventListener("click", w.optlywidget.setWidgetPosition.bind(null, pos));
+                                });
+                            }
+                            //remove widget
+                            if (d.getElementById("ccontainer_yuli")) {
+                                d.getElementById("ccontainer_yuli").parentNode.removeChild(d.getElementById("ccontainer_yuli"));
+                            }
                             //remove styles
                             if (d.getElementById("optly_tests")) {
                                 d.getElementById("optly_tests").parentNode.removeChild(d.getElementById("optly_tests"));
