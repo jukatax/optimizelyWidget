@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace    https://www.tesco.com
-// @version      6.8.8
+// @version      6.8.9
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -30,7 +30,7 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
         });
-        const VERSION = "6.8.8";
+        const VERSION = "6.8.9";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
         function _log(...msg) {
@@ -272,7 +272,7 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                                         div.style = "margin : 0;padding : 0 0 0 10px;";
                                         var isActive = (varName === val.name) ? true : false;
                                         var styles = 'color:' + w.optlywidget.styles.active_clr + ';';
-                                        div.innerHTML = isActive ? "<div style=" + styles + "><span id=\"test_name\">" + val.name + " - " + val.id + "<span style='font-style:italic;font-size:'+w.optlywidget.styles.font_size+';'>(active)</span></div>" : "<div><span id=\"test_name\">" + val.name + " - " + val.id + "</span> - <a href='#' style=" + styles + " onclick=\"widget.setExperiment(" + val.id + ")\">activate</a></div>";
+                                        div.innerHTML = isActive ? "<div style=" + styles + "><span id=\"test_name\">" + val.name + " - " + val.id + "<span style='font-style:italic;font-size:'+w.optlywidget.styles.font_size+';'>(active)</span></div>" : "<div><span id=\"test_name\">" + val.name + " - " + val.id + "</span> - <a href='#' style=" + styles + " onclick=\"optlywidget.setExperiment(" + val.id + ")\">activate</a></div>";
                                         d.querySelector("#test_id_" + ind).appendChild(div);
                                     });
                                 }
@@ -308,129 +308,127 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                                 if (e && type && (type === "tesco:UIExperimentRendered" || type.match("UIExperiment"))) {
                                     w.optlywidget.getOptlyServerSideTests();
                                 }
-                            });
+                            });//END bertie.onAny
                             /*======*/
                             bertie.on('UIImpression', function (e) {
                                 /*try {
-                                     var impressionType = e.type;
+              var impressionType = e.type;
 
-                                     if (impressionType === "renderedProduct") {
+              if (impressionType === "renderedProduct") {
 
-                                          var renderedProductIds = "";
-                                          _satellite.setVar('busImpressionType', impressionType);
-                                          _satellite.setVar('busFirstVisible', e.payload.firstVisibleItemNumber);
-                                          _satellite.setVar('busLastVisible', e.payload.lastVisibleItemNumber);
-                                          //sets product ID if not part of Trex - single ID
-                                          e.payload.items[0].panelType != "sugProduct" ? _satellite.setVar('productID', e.payload.items[0].productID) : null;
-                                          e.payload.items[0].panelType != "sugProduct" ? _satellite.setVar('productIDGtin', e.payload.items[0].gtin13) : null;
-                                          //non-trex prodID array
-                                          if (e.payload.items[0].panelType != "sugProduct") {
-                                               //  console.log('NOT SUGPROD ------')
-                                               // var arrayOfProductIDs = e.payload.items.map(function(x){
-                                               //   return x["@id"];
-                                               // });
-                                               //_satellite.setVar('busArrayOfProductIDs',arrayOfProductIDs);
-                                               _satellite.setVar('busArrayOfProducts', e.payload.items);
-                                               console.log('ARRAY SAT VAR----' + _satellite.getVar('busArrayOfProductIDs'))
-                                          }
-                                          //set superDepartment, department, aisle values for rest of shelf page
-                                          _satellite.setVar('busRosSuperDepartment', e.payload.items[0].hierarchy.superDepartment);
-                                          _satellite.setVar('busRosDepartment', e.payload.items[0].hierarchy.department);
-                                          _satellite.setVar('busRosAisle', e.payload.items[0].hierarchy.aisle);
+                   var renderedProductIds = "";
+                   _satellite.setVar('busImpressionType', impressionType);
+                   _satellite.setVar('busFirstVisible', e.payload.firstVisibleItemNumber);
+                   _satellite.setVar('busLastVisible', e.payload.lastVisibleItemNumber);
+                   //sets product ID if not part of Trex - single ID
+                   e.payload.items[0].panelType != "sugProduct" ? _satellite.setVar('productID', e.payload.items[0].productID) : null;
+                   e.payload.items[0].panelType != "sugProduct" ? _satellite.setVar('productIDGtin', e.payload.items[0].gtin13) : null;
+                   //non-trex prodID array
+                   if (e.payload.items[0].panelType != "sugProduct") {
+                        //  console.log('NOT SUGPROD ------')
+                        // var arrayOfProductIDs = e.payload.items.map(function(x){
+                        //   return x["@id"];
+                        // });
+                        //_satellite.setVar('busArrayOfProductIDs',arrayOfProductIDs);
+                        _satellite.setVar('busArrayOfProducts', e.payload.items);
+                        console.log('ARRAY SAT VAR----' + _satellite.getVar('busArrayOfProductIDs'))
+                   }
+                   //set superDepartment, department, aisle values for rest of shelf page
+                   _satellite.setVar('busRosSuperDepartment', e.payload.items[0].hierarchy.superDepartment);
+                   _satellite.setVar('busRosDepartment', e.payload.items[0].hierarchy.department);
+                   _satellite.setVar('busRosAisle', e.payload.items[0].hierarchy.aisle);
 
-                                          //_satellite.notify("BERTIE UIImpression FIRED :" + _satellite.getVar('busImpressionType'));
+                   //_satellite.notify("BERTIE UIImpression FIRED :" + _satellite.getVar('busImpressionType'));
 
-                                          _satellite.setVar('busRenderedItemsCount', e.payload.items.length);
+                   _satellite.setVar('busRenderedItemsCount', e.payload.items.length);
 
-                                          if (_satellite.getVar('busShowMore') == "show more") {
-                                               _satellite.track('UISHOWMORE');
-                                               _satellite.setVar('busShowMore') == "";
-                                          }
-                                          var merchFlag = false;
-                                          renderedProductIds = ";" + (e.payload.items.map(function (item) {
-                                               var prodVars = [
-                                                    '',//id
-                                                    '',//qty
-                                                    '',//price
-                                                    [],//events
-                                                    [] //evars
-                                               ];
-                                               if (item.numberReviews && item.numberReviews != null) {
-                                                    prodVars[3].push('event39=' + item.numberReviews);
-                                                    prodVars[4].push('eVar185=' + item.numberReviews);
-                                                    merchFlag = true;
-                                               }
-                                               if (item.starRating && item.starRating != null) {
-                                                    var starRating = parseFloat(item.starRating);
-                                                    starRating = isNaN(starRating) ? 0 : (starRating * 10);
-                                                    prodVars[3].push('event38=' + starRating);
-                                                    prodVars[4].push('eVar20=' + item.starRating);
-                                                    merchFlag = true;
-                                               }
-                                               if (item.isFav) {
-                                                    prodVars[4].push('eVar128=fav');
-                                                    merchFlag = true;
-                                               }
-                                               if (item['tesco:promotion'].onPromotion) {
-                                                    prodVars[4].push('eVar186=' + item['tesco:promotion'].promotionType);
-                                                    console.log('on offer code hit, this is prodvars', prodVars);
-                                               } else {
-                                                    console.log('on offer code not hit', prodVars);
-                                                    prodVars[4].push('eVar186=no');
-                                               }
-                                               if (merchFlag) {
-                                                    prodVars[3] = prodVars[3].join('|');
-                                                    prodVars[4] = prodVars[4].join('|');
-                                                    _satellite.setVar('busUIImpressionRatingSet', "true");
-                                                    return item.productID + prodVars.join(';');
-                                               } else {
-                                                    return item.productID + prodVars.join(';');
-                                               }
-                                          }).join(',;'));
+                   if (_satellite.getVar('busShowMore') == "show more") {
+                        _satellite.track('UISHOWMORE');
+                        _satellite.setVar('busShowMore') == "";
+                   }
+                   var merchFlag = false;
+                   renderedProductIds = ";" + (e.payload.items.map(function (item) {
+                        var prodVars = [
+                             '',//id
+                             '',//qty
+                             '',//price
+                             [],//events
+                             [] //evars
+                        ];
+                        if (item.numberReviews && item.numberReviews != null) {
+                             prodVars[3].push('event39=' + item.numberReviews);
+                             prodVars[4].push('eVar185=' + item.numberReviews);
+                             merchFlag = true;
+                        }
+                        if (item.starRating && item.starRating != null) {
+                             var starRating = parseFloat(item.starRating);
+                             starRating = isNaN(starRating) ? 0 : (starRating * 10);
+                             prodVars[3].push('event38=' + starRating);
+                             prodVars[4].push('eVar20=' + item.starRating);
+                             merchFlag = true;
+                        }
+                        if (item.isFav) {
+                             prodVars[4].push('eVar128=fav');
+                             merchFlag = true;
+                        }
+                        if (item['tesco:promotion'].onPromotion) {
+                             prodVars[4].push('eVar186=' + item['tesco:promotion'].promotionType);
+                             console.log('on offer code hit, this is prodvars', prodVars);
+                        } else {
+                             console.log('on offer code not hit', prodVars);
+                             prodVars[4].push('eVar186=no');
+                        }
+                        if (merchFlag) {
+                             prodVars[3] = prodVars[3].join('|');
+                             prodVars[4] = prodVars[4].join('|');
+                             _satellite.setVar('busUIImpressionRatingSet', "true");
+                             return item.productID + prodVars.join(';');
+                        } else {
+                             return item.productID + prodVars.join(';');
+                        }
+                   }).join(',;'));
 
-                                          //console.log("PRODUCT STRING: "+renderedProductIds);
-                                          _satellite.notify("BERTIE Rendered Product Ids (UIImpression DCR):" + renderedProductIds);
-                                          if (_satellite.getVar('busRenderedProdViewString') && e.payload.items[0].panelType !== "sugProduct") {
-                                               if (/^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
-                                                    _satellite.setVar('favProdViewString', renderedProductIds);
-                                               } else {
-                                                    var existingProdString = _satellite.getVar('busRenderedProdViewString');
-                                                    _satellite.setVar('busRenderedProdViewString', existingProdString + "," + renderedProductIds);
-                                               }
-                                          } else {
-                                               if (e.payload.items[0].panelType !== "sugProduct" && /^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
-                                                    _satellite.setVar('favProdViewString', renderedProductIds);
-                                               } else if (e.payload.items[0].panelType == "sugProduct") {
-                                                    _satellite.setVar('trexProdViewString', renderedProductIds)
-                                               } else {
-                                                    _satellite.setVar('busRenderedProdViewString', renderedProductIds);
-                                               }
-                                          }
-                                          _satellite.notify("BERTIE DATA ELEMENT busRenderedProdViewString: " + _satellite.getVar('busRenderedProdViewString'));
+                   //console.log("PRODUCT STRING: "+renderedProductIds);
+                   _satellite.notify("BERTIE Rendered Product Ids (UIImpression DCR):" + renderedProductIds);
+                   if (_satellite.getVar('busRenderedProdViewString') && e.payload.items[0].panelType !== "sugProduct") {
+                        if (/^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
+                             _satellite.setVar('favProdViewString', renderedProductIds);
+                        } else {
+                             var existingProdString = _satellite.getVar('busRenderedProdViewString');
+                             _satellite.setVar('busRenderedProdViewString', existingProdString + "," + renderedProductIds);
+                        }
+                   } else {
+                        if (e.payload.items[0].panelType !== "sugProduct" && /^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
+                             _satellite.setVar('favProdViewString', renderedProductIds);
+                        } else if (e.payload.items[0].panelType == "sugProduct") {
+                             _satellite.setVar('trexProdViewString', renderedProductIds)
+                        } else {
+                             _satellite.setVar('busRenderedProdViewString', renderedProductIds);
+                        }
+                   }
+                   _satellite.notify("BERTIE DATA ELEMENT busRenderedProdViewString: " + _satellite.getVar('busRenderedProdViewString'));
 
-                                          var panelType = e.payload.items[0].panelType;
-                                          if ((panelType == "favourites" || panelType == "hyf") && /^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
+                   var panelType = e.payload.items[0].panelType;
+                   if ((panelType == "favourites" || panelType == "hyf") && /^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
 
-                                               if (panelType == 'hyf') {
-                                                    _satellite.setVar('hyfProdViewString', renderedProductIds);
-                                               }
-                                               setTimeout(function () {
-                                                    _satellite.setVar('busRenderedCarouselPanelType', panelType);
-                                                    _satellite.track("favCarousel");
-                                               }, 700);
-                                          }
-                                     };
-                                } catch (err) {widget.log("DTM error: ",err);
-                                     _satellite.notify("DTM err", err);
-                                }*/
-                            });
+                        if (panelType == 'hyf') {
+                             _satellite.setVar('hyfProdViewString', renderedProductIds);
+                        }
+                        setTimeout(function () {
+                             _satellite.setVar('busRenderedCarouselPanelType', panelType);
+                             _satellite.track("favCarousel");
+                        }, 700);
+                   }
+              };
+         } catch (err) {widget.log("DTM error: ",err);
+              _satellite.notify("DTM err", err);
+         }*/
+                            });//END UIImpression
                             //bertie.purgeEventsOfType('UIImpression');
                             //return true;
-
                             /*======*/
-
-                        }
-                    }, //initBertie
+                        }// END else
+                    }, //END initBertie()
                     poll4optlyX: () => {
                         if (!Boolean(d.getElementsByTagName("body")[0] && w.optimizely && (typeof w.optimizely.get === "function") && w.optimizely.get('state').getVariationMap())) {
                             if (w.optlywidget.optlyCounter < w.optlywidget.countMax) {
@@ -498,6 +496,6 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                 w.requestAnimationFrame(poll4ready);
             }
         });
-        _log("running...");
+        // _log("running...");
     })(window, document);
 }
