@@ -1,13 +1,11 @@
 // ==UserScript==
 // @name         Optimizely X Widget
-// @namespace    https://www.tesco.com
-// @version      6.8.9
+// @namespace
+// @version      6.8.11
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
-// @match        https://*.tesco.*/*
-// @exclude      /(ourtesco|condeco|github|aha|jira|timex|litmos|payslip|launchandlearn|app\.optimizely|webex|accessmanager|ukirp365|yammer|learningattesco|myaccount\.global)/
-// @grant        none
+// @match        https://*
 // @updateURL    https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
 // @downloadURL  https://raw.githubusercontent.com/jukatax/optimizelyWidget/master/source_js.js
 // @grant        unsafeWindow
@@ -22,19 +20,39 @@
 /*
 In order for the log to work this script has to be injected before the call to Optimizely, in Tampermonkey set the script to be injected at "document start"
  */
-if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)) {
+if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOrigins.length)) {
     (function (w, d) {
         "use strict";
         w.optimizely = w.optimizely || [];
-        w.optimizely.push({
+        w.optimizely.push ? w.optimizely.push({
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
-        });
-        const VERSION = "6.8.9";
+        }) : null;
+        const VERSION = "6.8.11";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
-        function _log(...msg) {
-            console.log.call(null, ("%c" + NAME), WIDGETSTYLES, ...msg);
+        /**
+        *
+        * @param {Array of strings} msg
+        */
+        function _log(msg) {
+            console.log.call(null, ("%c" + NAME), WIDGETSTYLES);
+            if (typeof msg === 'object' && typeof msg.slice === 'function') {
+                msg.map((item) => {
+                    if (typeof item === 'object') {
+                        console.log.call(null, "%c %o ", WIDGETSTYLES, item);
+                    } else {
+                        console.log.call(null, ("%c " + item), WIDGETSTYLES);
+                    }
+                });
+            } else {
+                if (typeof msg === 'object') {
+                    console.log.call(null, "%c %o ", WIDGETSTYLES, msg);
+                } else {
+                    console.log.call(null, ("%c " + msg), WIDGETSTYLES);
+                }
+            }
+            console.log.call(null, ("%c" + NAME + " END "), WIDGETSTYLES);
         }
         /*===========================*/
         // start the widget when the body is present
@@ -310,123 +328,6 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
                                 }
                             });//END bertie.onAny
                             /*======*/
-                            bertie.on('UIImpression', function (e) {
-                                /*try {
-              var impressionType = e.type;
-
-              if (impressionType === "renderedProduct") {
-
-                   var renderedProductIds = "";
-                   _satellite.setVar('busImpressionType', impressionType);
-                   _satellite.setVar('busFirstVisible', e.payload.firstVisibleItemNumber);
-                   _satellite.setVar('busLastVisible', e.payload.lastVisibleItemNumber);
-                   //sets product ID if not part of Trex - single ID
-                   e.payload.items[0].panelType != "sugProduct" ? _satellite.setVar('productID', e.payload.items[0].productID) : null;
-                   e.payload.items[0].panelType != "sugProduct" ? _satellite.setVar('productIDGtin', e.payload.items[0].gtin13) : null;
-                   //non-trex prodID array
-                   if (e.payload.items[0].panelType != "sugProduct") {
-                        //  console.log('NOT SUGPROD ------')
-                        // var arrayOfProductIDs = e.payload.items.map(function(x){
-                        //   return x["@id"];
-                        // });
-                        //_satellite.setVar('busArrayOfProductIDs',arrayOfProductIDs);
-                        _satellite.setVar('busArrayOfProducts', e.payload.items);
-                        console.log('ARRAY SAT VAR----' + _satellite.getVar('busArrayOfProductIDs'))
-                   }
-                   //set superDepartment, department, aisle values for rest of shelf page
-                   _satellite.setVar('busRosSuperDepartment', e.payload.items[0].hierarchy.superDepartment);
-                   _satellite.setVar('busRosDepartment', e.payload.items[0].hierarchy.department);
-                   _satellite.setVar('busRosAisle', e.payload.items[0].hierarchy.aisle);
-
-                   //_satellite.notify("BERTIE UIImpression FIRED :" + _satellite.getVar('busImpressionType'));
-
-                   _satellite.setVar('busRenderedItemsCount', e.payload.items.length);
-
-                   if (_satellite.getVar('busShowMore') == "show more") {
-                        _satellite.track('UISHOWMORE');
-                        _satellite.setVar('busShowMore') == "";
-                   }
-                   var merchFlag = false;
-                   renderedProductIds = ";" + (e.payload.items.map(function (item) {
-                        var prodVars = [
-                             '',//id
-                             '',//qty
-                             '',//price
-                             [],//events
-                             [] //evars
-                        ];
-                        if (item.numberReviews && item.numberReviews != null) {
-                             prodVars[3].push('event39=' + item.numberReviews);
-                             prodVars[4].push('eVar185=' + item.numberReviews);
-                             merchFlag = true;
-                        }
-                        if (item.starRating && item.starRating != null) {
-                             var starRating = parseFloat(item.starRating);
-                             starRating = isNaN(starRating) ? 0 : (starRating * 10);
-                             prodVars[3].push('event38=' + starRating);
-                             prodVars[4].push('eVar20=' + item.starRating);
-                             merchFlag = true;
-                        }
-                        if (item.isFav) {
-                             prodVars[4].push('eVar128=fav');
-                             merchFlag = true;
-                        }
-                        if (item['tesco:promotion'].onPromotion) {
-                             prodVars[4].push('eVar186=' + item['tesco:promotion'].promotionType);
-                             console.log('on offer code hit, this is prodvars', prodVars);
-                        } else {
-                             console.log('on offer code not hit', prodVars);
-                             prodVars[4].push('eVar186=no');
-                        }
-                        if (merchFlag) {
-                             prodVars[3] = prodVars[3].join('|');
-                             prodVars[4] = prodVars[4].join('|');
-                             _satellite.setVar('busUIImpressionRatingSet', "true");
-                             return item.productID + prodVars.join(';');
-                        } else {
-                             return item.productID + prodVars.join(';');
-                        }
-                   }).join(',;'));
-
-                   //console.log("PRODUCT STRING: "+renderedProductIds);
-                   _satellite.notify("BERTIE Rendered Product Ids (UIImpression DCR):" + renderedProductIds);
-                   if (_satellite.getVar('busRenderedProdViewString') && e.payload.items[0].panelType !== "sugProduct") {
-                        if (/^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
-                             _satellite.setVar('favProdViewString', renderedProductIds);
-                        } else {
-                             var existingProdString = _satellite.getVar('busRenderedProdViewString');
-                             _satellite.setVar('busRenderedProdViewString', existingProdString + "," + renderedProductIds);
-                        }
-                   } else {
-                        if (e.payload.items[0].panelType !== "sugProduct" && /^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
-                             _satellite.setVar('favProdViewString', renderedProductIds);
-                        } else if (e.payload.items[0].panelType == "sugProduct") {
-                             _satellite.setVar('trexProdViewString', renderedProductIds)
-                        } else {
-                             _satellite.setVar('busRenderedProdViewString', renderedProductIds);
-                        }
-                   }
-                   _satellite.notify("BERTIE DATA ELEMENT busRenderedProdViewString: " + _satellite.getVar('busRenderedProdViewString'));
-
-                   var panelType = e.payload.items[0].panelType;
-                   if ((panelType == "favourites" || panelType == "hyf") && /^\/$|^\/groceries\/$/.test(_satellite.getVar("Path Name No Lang"))) {
-
-                        if (panelType == 'hyf') {
-                             _satellite.setVar('hyfProdViewString', renderedProductIds);
-                        }
-                        setTimeout(function () {
-                             _satellite.setVar('busRenderedCarouselPanelType', panelType);
-                             _satellite.track("favCarousel");
-                        }, 700);
-                   }
-              };
-         } catch (err) {widget.log("DTM error: ",err);
-              _satellite.notify("DTM err", err);
-         }*/
-                            });//END UIImpression
-                            //bertie.purgeEventsOfType('UIImpression');
-                            //return true;
-                            /*======*/
                         }// END else
                     }, //END initBertie()
                     poll4optlyX: () => {
@@ -497,5 +398,5 @@ if (!(window.location.ancestorOrigins && window.location.ancestorOrigins.length)
             }
         });
         // _log("running...");
-    })(window, document);
+    })(unsafeWindow, document);
 }
