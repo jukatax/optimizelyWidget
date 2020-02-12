@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace
-// @version      6.8.12
+// @version      6.8.13
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -28,7 +28,7 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
         }) : null;
-        const VERSION = "6.8.12";
+        const VERSION = "6.8.13";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
         /**
@@ -99,7 +99,7 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                     targetCounter: 0,
                     sstestsCounter: 0,
                     bertieCounter: 0,
-                    countMax: 4,
+                    countMax: 10,
                     toggleWidget: (e) => { //Cmnd/Ctrl + Shift + Y to hide/show the widget
                         var evtobj = e; //w.optlywidget.log(evtobj.keyCode);
                         if ((evtobj.metaKey || evtobj.ctrlKey) && evtobj.shiftKey && evtobj.keyCode === 89) {
@@ -255,10 +255,12 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                                 w.optlywidget.serverSideTests.push(JSON.stringify(gettests));
 
                             } else {
+                                w.optlywidget.log("No tests found...");
                                 w.optlywidget.serverSideTests = [];
                                 d.querySelector("#optlyServerSide").innerHTML = "";
-                                w.optlywidget.serverSideTests.indexOf("#### No Optly Server-side experiments running ####") === -1 ? widget.serverSideTests.push("#### No Optly Server-side experiments running ####") : null;
+                                ~w.optlywidget.serverSideTests.indexOf("#### No Optly Server-side experiments running ####") ? widget.serverSideTests.push("#### No Optly Server-side experiments running ####") : null;
                             }
+                            divWrap.id = "ss_tests";
                             divWrap.innerHTML = "<ul>" + w.optlywidget.serverSideTests.join("<br />") + "</ul>";
                             d.querySelector("#optlyServerSide").appendChild(divWrap);
                         } else {
@@ -309,8 +311,6 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                             w.brty = "";
                             bertie.onAny(function (e) {
                                 var type = e["@type"] || e.type || e._eventType;
-                                //type.match(/siteData/i)?bertie_dom_log_wrapper.innerHTML="":null;
-                                //w.optlywidget.log(" bertie.onAny fired...: ",type," , exists already?- ",!Boolean(bertie_dom_log_wrapper.textContent.match(type)));
                                 bertie_dom_log_wrapper ?
                                     (
                                         bertie_dom_log_wrapper.classList.remove("hide"),
@@ -323,7 +323,7 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                                         w.brty = ""
                                     )
                                     : w.brty += "<p><b>" + type + "</b></p>";
-                                if (e && type && (type === "tesco:UIExperimentRendered" || type.match("UIExperiment"))) {
+                                if (!!type && !!type.match("UIExperiment")) {
                                     w.optlywidget.getOptlyServerSideTests();
                                 }
                             });//END bertie.onAny
@@ -344,11 +344,11 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                         }
                     },
                     poll4OptlyServerSide: () => {
-                        if (typeof window.optimizelyData === "object") {
+                        if (!!w.optimizelyData && !!w.optimizelyData.length) {
                             w.optlywidget.getOptlyServerSideTests();
                         } else {
                             if (w.optlywidget.sstestsCounter < w.optlywidget.countMax) {
-                                w.optlywidget.sstestsCounter += 0.5;
+                                w.optlywidget.sstestsCounter += 0.25;
                                 setTimeout(w.optlywidget.poll4OptlyServerSide, 250);
                             } else {
                                 d.querySelector("#optlyServerSide").innerHTML = "<div style='" + w.optlywidget.styles.results + "'>#### No Optly server-side experiments ####</div>";
