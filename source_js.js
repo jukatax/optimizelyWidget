@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace
-// @version      6.8.11
+// @version      6.8.12
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -28,7 +28,7 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
         }) : null;
-        const VERSION = "6.8.11";
+        const VERSION = "6.8.12";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
         /**
@@ -118,7 +118,7 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                         if (cname) {
                             d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
                             var expires = "expires=" + d.toUTCString();
-                            document.cookie = cname + "=true;path=/;domain=" + w.optlywidget.domain + ";" + expires;
+                            document.cookie = cname + "=true;path=/;domain=" + w.optlywidget.domain + ";" + expires + "sameSite=Lax;";
                             cerror ? (cerror.innerHTML = "Cookie has been Set!") : null;
                             if (exdays === -1 || exdays === '-1') {
                                 document.cookie = "optimizelySegments=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
@@ -134,7 +134,7 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                                 //w.sessionStorage.clear();
                             }
                         } else {
-                            ceror ? (cerror.innerHTML = "You need to specify a name for the cookie") : null;
+                            cerror ? (cerror.innerHTML = "You need to specify a name for the cookie") : null;
                         }
                         if (cname && cname.indexOf("ssp") === -1) {
                             setTimeout(() => {
