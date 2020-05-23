@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Optimizely X Widget
 // @namespace
-// @version      6.8.13
+// @version      6.8.14
 // @encoding     utf-8
 // @description  Optimizely X Widget
 // @author       Yuliyan Yordanov
@@ -28,7 +28,7 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
             type: 'log',
             level: 'error' // off/error/warn/info/debug/all
         }) : null;
-        const VERSION = "6.8.13";
+        const VERSION = "6.8.14";
         const WIDGETSTYLES = "background:orange;color:#000;padding:2px 4px;";
         const NAME = "::WIDGET-Optimizely X Widget v." + VERSION + "::";
         /**
@@ -93,7 +93,7 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                     cookieName: "_qa",
 
                     cookieName2: "ssp" + (d.cookie.match(/sspleft/ig) ? "left" : d.cookie.match(/sspright/ig) ? "right" : d.cookie.match(/sspcenter/ig) ? "center" : "left"),
-                    domain: d.domain.split('.').length > 2 ? d.domain.split('.')[d.domain.split('.').length - 2] + "." + d.domain.split('.')[d.domain.split('.').length - 1] : d.domain,
+                    domain: d.domain,
                     count: 0,
                     optlyCounter: 0,
                     targetCounter: 0,
@@ -118,18 +118,18 @@ if (!(unsafeWindow.location.ancestorOrigins && unsafeWindow.location.ancestorOri
                         if (cname) {
                             d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
                             var expires = "expires=" + d.toUTCString();
-                            document.cookie = cname + "=true;path=/;domain=" + w.optlywidget.domain + ";" + expires + "sameSite=Lax;";
+                            document.cookie = cname + "=true;path=/;domain=" + w.optlywidget.domain + ";" + expires + ";SameSite=Strict;";
                             cerror ? (cerror.innerHTML = "Cookie has been Set!") : null;
                             if (exdays === -1 || exdays === '-1') {
-                                document.cookie = "optimizelySegments=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyEndUserId=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyEndUserId=0;path=/;domain=optimizely.com;expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyRedirectData=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyBuckets=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyEndUserId=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelySegments=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = "optimizelyPendingLogEvents=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
-                                document.cookie = cname + "=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;";
+                                document.cookie = "optimizelySegments=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
+                                document.cookie = "optimizelyEndUserId=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
+                                document.cookie = "optimizelyEndUserId=0;path=/;domain=optimizely.com;expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
+                                document.cookie = "optimizelyRedirectData=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
+                                document.cookie = "optimizelyBuckets=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
+                                document.cookie = "optimizelyEndUserId=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
+                                document.cookie = "optimizelySegments=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
+                                document.cookie = "optimizelyPendingLogEvents=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
+                                document.cookie = cname + "=0;path=/;domain=" + w.optlywidget.domain + ";expires=Thu, 18 Dec 2013 12:00:00 UTC;SameSite=Strict;";
                                 //w.localStorage.clear();
                                 //w.sessionStorage.clear();
                             }
